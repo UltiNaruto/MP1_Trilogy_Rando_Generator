@@ -310,6 +310,8 @@ namespace MP1_Trilogy_Rando_Generator
                 }
             }
 
+            File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\files\\main.dol", true);
+
             NodManager.ExtractISO(".\\tmp\\"+ gc_iso_filename, true);
 
             File.Delete(".\\tmp\\" + gc_iso_filename);
