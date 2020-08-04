@@ -6,25 +6,23 @@ using System.Threading;
 
 namespace MP1_Trilogy_Rando_Generator
 {
-    class NodManager
+    class WITManager
     {
         [DllImport("user32.dll")]
         static extern bool SetWindowText(IntPtr hWnd, string text);
 
-        private const string NOD_PATH = @"nod\nod.exe";
+        private const string WIT_PATH = @".\wit\bin\wit.exe";
 
-        public static bool ExtractISO(string filename, bool isGC_ISO)
+        public static bool CreateCompressISO(string filename, bool isGC_ISO, String GameCode)
         {
-            if (!Directory.Exists(".\\tmp\\" + (isGC_ISO ? "gc" : "wii")))
-                Directory.CreateDirectory(".\\tmp\\" + (isGC_ISO ? "gc" : "wii"));
             try
             {
-                ProcessStartInfo info = new ProcessStartInfo(NOD_PATH, "extract -f \"" + filename + "\" .\\tmp\\"+ (isGC_ISO?"gc":"wii"));
+                ProcessStartInfo info = new ProcessStartInfo(WIT_PATH, "COPY -d \""+filename+"\" -s .\\tmp\\wii -C  --id " + GameCode);
                 info.WorkingDirectory = Directory.GetCurrentDirectory();
                 info.UseShellExecute = true;
                 Process proc = Process.Start(info);
                 Thread.Sleep(1000);
-                SetWindowText(proc.MainWindowHandle, "Extracting "+(isGC_ISO ? "GC" : "Wii")+" ISO...");
+                SetWindowText(proc.MainWindowHandle, "Creating Compressed "+(isGC_ISO ? "GC" : "Wii")+" ISO...");
                 proc.WaitForExit();
                 return proc.ExitCode == 0;
             }
@@ -34,16 +32,16 @@ namespace MP1_Trilogy_Rando_Generator
             }
         }
 
-        public static bool CreateISO(string filename, bool isGC_ISO)
+        public static bool CreateWBFS(string filename, String GameCode)
         {
             try
             {
-                ProcessStartInfo info = new ProcessStartInfo(NOD_PATH, (isGC_ISO?"makegcn .\\tmp\\gc":"makewii .\\tmp\\wii") + " \"" + filename+"\"");
+                ProcessStartInfo info = new ProcessStartInfo(WIT_PATH, "COPY -s \".\\tmp\\wii\" -d \"" + filename + "\" -B --id \"" + GameCode + "\"");
                 info.WorkingDirectory = Directory.GetCurrentDirectory();
                 info.UseShellExecute = true;
                 Process proc = Process.Start(info);
                 Thread.Sleep(1000);
-                SetWindowText(proc.MainWindowHandle, "Creating " + (isGC_ISO ? "GC" : "Wii") + " ISO...");
+                SetWindowText(proc.MainWindowHandle, "Creating WBFS...");
                 proc.WaitForExit();
                 return proc.ExitCode == 0;
             }

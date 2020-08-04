@@ -56,9 +56,11 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="WITManager.cs" />
     <Compile Include="NodManager.cs" />
     <Compile Include="Patcher\DOL_Patch.cs" />
     <Compile Include="Patcher\IPatch.cs" />
+    <Compile Include="Patcher\Patches.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomizerManager.cs" />

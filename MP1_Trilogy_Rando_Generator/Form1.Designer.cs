@@ -57,10 +57,10 @@
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 251);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 261);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -69,7 +69,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(478, 94);
+            this.groupBox1.Size = new System.Drawing.Size(478, 104);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ISO Template";
@@ -87,8 +87,8 @@
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(472, 75);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(472, 85);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // label1
@@ -108,7 +108,7 @@
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button1.Location = new System.Drawing.Point(3, 46);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(216, 26);
+            this.button1.Size = new System.Drawing.Size(216, 36);
             this.button1.TabIndex = 1;
             this.button1.Text = "Generate a template ISO for Prime 1 Randomizer";
             this.button1.UseVisualStyleBackColor = true;
@@ -120,7 +120,7 @@
             this.button2.Enabled = false;
             this.button2.Location = new System.Drawing.Point(225, 46);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(244, 26);
+            this.button2.Size = new System.Drawing.Size(244, 36);
             this.button2.TabIndex = 2;
             this.button2.Text = "Delete template ISO";
             this.button2.UseVisualStyleBackColor = true;
@@ -130,7 +130,7 @@
             // 
             this.groupBox2.Controls.Add(this.tableLayoutPanel3);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(3, 103);
+            this.groupBox2.Location = new System.Drawing.Point(3, 113);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(478, 144);
             this.groupBox2.TabIndex = 2;
@@ -203,11 +203,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 251);
+            this.ClientSize = new System.Drawing.Size(484, 261);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "Metroid Prime 1 - Trilogy Rando Generator";
+            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);

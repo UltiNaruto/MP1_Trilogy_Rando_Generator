@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MP1_Trilogy_Rando_Generator.Patcher;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,70 +45,16 @@ namespace MP1_Trilogy_Rando_Generator
             }
         }
 
-        void SetStartingArea(Enums.SpawnRoom spawnRoom)
-        {
-            UInt16 MLVL_H = (UInt16)((spawnRoom.MLVL & 0xFFFF0000) >> 16);
-            UInt16 MLVL_L = (UInt16)(spawnRoom.MLVL & 0xFFFF);
-            if (MLVL_L > 0x7FFF)
-                MLVL_H++;
-
-            new Patcher.DOL_Patch<UInt16>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801098EC + 2, MLVL_H).Apply();
-            new Patcher.DOL_Patch<UInt16>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801098EC + 14, MLVL_L).Apply();
-            new Patcher.DOL_Patch<UInt16>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x8010D278 + 2, MLVL_H).Apply();
-            new Patcher.DOL_Patch<UInt16>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x8010D278 + 14, MLVL_L).Apply();
-            new Patcher.DOL_Patch<UInt16>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x8010D27C + 2, (UInt16)spawnRoom.PakIndex).Apply();
-            new Patcher.DOL_Patch<UInt16>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x800CD1F8 + 18, (UInt16)spawnRoom.MREA_ID).Apply();
-        }
-
-        void ApplySkipCutscenePatch(bool enabled)
-        {
-            if (enabled)
-            {
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FC70C, (UInt32)0x38600001).Apply(); // li r3, 1
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FC70C + 4, (UInt32)0x4E800020).Apply(); // blr
-            }
-            else
-            {
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FC70C, (UInt32)0x9421FFE0).Apply(); // stwu r1, local_20(r1)
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FC70C + 4, (UInt32)0x7C0802A6).Apply(); // mfspr r0, LR
-            }
-        }
-
-        void ApplyHeatProtectionPatch(String type)
-        {
-            if (type == "Any Suit")
-            {
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48, (UInt32)0x7C0800D0).Apply(); // neg r0, r8
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48 + 4, (UInt32)0x7C004078).Apply(); // andc r0, r0, r8
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48 + 8, (UInt32)0x7CC63850).Apply(); // subf r6, r6, r7
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48 + 12, (UInt32)0x7CC60034).Apply(); // cntlzw r6, r6
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48 + 16, (UInt32)0x54070FFE).Apply(); // rlwinm r7, r0, 0x1, 0x1f, 0x1f
-            }
-            if (type == "Varia Only")
-            {
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48, (UInt32)0x7CC63850).Apply(); // subf r6, r6, r7
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48 + 4, (UInt32)0x80F000E0).Apply(); // cntlzw r6, r6
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48 + 8, (UInt32)0x80E600E0).Apply(); // lwz r7, 0xe0(r6)
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48 + 12, (UInt32)0x60000000).Apply(); // nop
-                new Patcher.DOL_Patch<UInt32>(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", 0x801FEBCC + 0x48 + 16, (UInt32)0x60000000).Apply(); // nop
-            }
-        }
-
-        void RandomizeDeveloperCode(String outFile)
+        String RandomizeDeveloperCode()
         {
             const String AllowedCharacters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             int len = AllowedCharacters.Length;
-            String BaseGameCode = "R3ME";
             String DeveloperCode = "01";
             while (DeveloperCode == "01" || UsedDeveloperCodes.Contains(DeveloperCode))
                 DeveloperCode = "" + AllowedCharacters[rand.Next(len)] + AllowedCharacters[rand.Next(len)];
-            using (var file = File.Open(outFile, FileMode.Open))
-            using (var writer = new BinaryWriter(file))
-            {
-                writer.Write(Encoding.ASCII.GetBytes(BaseGameCode + DeveloperCode), 0, 6);
-            }
             UsedDeveloperCodes.Add(DeveloperCode);
             File.WriteAllLines("udc.bin", UsedDeveloperCodes.ToArray());
+            return DeveloperCode;
         }
 
         public Form1()
@@ -210,6 +157,15 @@ namespace MP1_Trilogy_Rando_Generator
                 return;
             }
 
+            File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
+            Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe", true);
+            Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP2", true);
+            Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP3", true);
+
+            foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\", "*.dol", SearchOption.TopDirectoryOnly))
+                if (!file.Contains("rs5mp1_p.dol"))
+                    File.Delete(file);
+
             foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\MP1", "Metroid*.pak", SearchOption.TopDirectoryOnly))
                 File.Copy(file, ".\\tmp\\gc\\files\\"+Path.GetFileName(file), true);
             NodManager.CreateISO("gc_template.iso", true);
@@ -270,6 +226,9 @@ namespace MP1_Trilogy_Rando_Generator
                 MessageBox.Show("Please click on \"Locate BashPrime's Randomizer\" before attempting to randomize!");
                 return;
             }
+
+            if (!Directory.Exists(@".\tmp"))
+                Directory.CreateDirectory(@".\tmp");
 
             Config.PatchSettings patchSettingsBak = new Config.PatchSettings();
             Config.PatchSettings patchSettingsWii = new Config.PatchSettings((curDir + @"\gc_template.iso").Replace("\\", "\\\\"), (curDir + @"\tmp").Replace("\\", "\\\\"));
@@ -339,6 +298,15 @@ namespace MP1_Trilogy_Rando_Generator
                         MessageBox.Show("Failed extracting wii iso!");
                         return;
                     }
+
+                    File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
+                    Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe", true);
+                    Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP2", true);
+                    Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP3", true);
+
+                    foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\", "*.dol", SearchOption.TopDirectoryOnly))
+                        if(!file.Contains("rs5mp1_p.dol"))
+                            File.Delete(file);
                 }
             }
 
@@ -348,6 +316,8 @@ namespace MP1_Trilogy_Rando_Generator
 
             foreach (var file in Directory.EnumerateFiles(".\\tmp\\gc\\files", "Metroid*.pak", SearchOption.TopDirectoryOnly))
                 File.Copy(file, ".\\tmp\\wii\\DATA\\files\\MP1\\" + Path.GetFileName(file), true);
+
+            File.Copy(".\\tmp\\gc\\files\\randomprime.txt", ".\\tmp\\wii\\DATA\\files\\randomprime.txt", true);
 
             Directory.Delete(".\\tmp\\gc", true);
 
@@ -360,11 +330,11 @@ namespace MP1_Trilogy_Rando_Generator
                     MessageBox.Show("No spawn room defined!");
                     return;
                 }
-                SetStartingArea(randomizerSettings.spawnRoom);
+                Patches.SetStartingArea(randomizerSettings.spawnRoom);
             }
 
-            ApplySkipCutscenePatch(true);
-            ApplyHeatProtectionPatch(randomizerSettings.heatProtection);
+            Patches.ApplySkipCutscenePatch(true);
+            Patches.ApplyHeatProtectionPatch(randomizerSettings.heatProtection);
 
             if (randomizerSettings.suitDamageReduction == "Progressive")
             {
@@ -372,13 +342,15 @@ namespace MP1_Trilogy_Rando_Generator
                 return;
             }
 
+            Patches.ApplyScanDashPatch(true);
+
             /*  */
 
             using (var saveFileDialog = new SaveFileDialog())
             {
                 saveFileDialog.Title = "Save output iso to :";
-                saveFileDialog.Filter = "Wii ISO File|*.iso";
-                saveFileDialog.FileName = gc_iso_filename;
+                saveFileDialog.Filter = "Wii Compressed ISO File|*.ciso|Wii WBFS File|*.wbfs";
+                saveFileDialog.FileName = Path.ChangeExtension(gc_iso_filename, ".ciso");
                 saveFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
                 if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
                 {
@@ -388,10 +360,16 @@ namespace MP1_Trilogy_Rando_Generator
                 new_wii_iso_path = saveFileDialog.FileName;
             }
 
-            NodManager.CreateISO(new_wii_iso_path, false);
-            RandomizeDeveloperCode(new_wii_iso_path);
+            // WIT doesn't like complex paths so make the image in tmp folder then move back to the output folder
+            if (new_wii_iso_path.ToLower().EndsWith(".ciso"))
+                WITManager.CreateCompressISO(".\\tmp\\mpt.ciso", false, "R3ME"+RandomizeDeveloperCode());
+            else if (new_wii_iso_path.ToLower().EndsWith(".wbfs"))
+                WITManager.CreateWBFS(".\\tmp\\mpt.wbfs", "R3ME" + RandomizeDeveloperCode());
+
+            File.Move(".\\tmp\\mpt" + Path.GetExtension(new_wii_iso_path), new_wii_iso_path);
+
             if (this.checkBox1.Checked)
-                File.Copy(".\\tmp\\"+gc_iso_filename.Replace(".iso", " - Spoiler.json"), new_wii_iso_path.Replace(".iso", " - Spoiler.json"));
+                File.Copy(".\\tmp\\"+Path.ChangeExtension(gc_iso_filename, ".json").Replace(".json", " - Spoiler.json"), Path.ChangeExtension(new_wii_iso_path, ".json").Replace(".json", " - Spoiler.json"));
             MessageBox.Show("Game has been randomized! Have fun!");
         }
     }
