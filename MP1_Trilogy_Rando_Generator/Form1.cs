@@ -310,7 +310,7 @@ namespace MP1_Trilogy_Rando_Generator
                 }
             }
 
-            File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\files\\main.dol", true);
+            File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
 
             NodManager.ExtractISO(".\\tmp\\"+ gc_iso_filename, true);
 
@@ -338,13 +338,14 @@ namespace MP1_Trilogy_Rando_Generator
             Patches.ApplySkipCutscenePatch(true);
             Patches.ApplyHeatProtectionPatch(randomizerSettings.heatProtection);
 
-            if (randomizerSettings.suitDamageReduction == "Progressive")
+            /*if (randomizerSettings.suitDamageReduction == "Progressive")
             {
                 MessageBox.Show("Progressive damage reduction is not yet supported!");
                 return;
-            }
+            }*/
 
-            Patches.ApplyScanDashPatch(true);
+            Patches.ApplyScanDashPatch(this.checkBox2.Checked);
+            //Patches.ApplyUnderwaterSlopeJumpFixPatch(true);
 
             /*  */
 

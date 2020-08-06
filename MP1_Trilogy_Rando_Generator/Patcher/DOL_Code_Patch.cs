@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MP1_Trilogy_Rando_Generator.Patcher
 {
-    class DOL_Patch<T> : IPatch
+    class DOL_Code_Patch<T> : IPatch
     {
         const UInt32 MEM_BASE_ADDR = 0x80000000;
         const UInt32 MEM_DOL_START_ADDR = MEM_BASE_ADDR + 0x3F00;
@@ -16,7 +16,7 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
         private readonly UInt32 Address;
         private readonly Object Value;
 
-        public DOL_Patch(String path, UInt32 addr, T val)
+        public DOL_Code_Patch(String path, UInt32 addr, T val)
         {
             if (addr < MEM_DOL_START_ADDR || addr > MEM_DOL_END_ADDR)
                 throw new Exception("addr out of memory boundaries");
