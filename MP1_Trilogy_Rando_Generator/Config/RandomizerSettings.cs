@@ -1,6 +1,5 @@
 ﻿using MP1_Trilogy_Rando_Generator.Enums;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace MP1_Trilogy_Rando_Generator.Config
@@ -18,25 +17,28 @@ namespace MP1_Trilogy_Rando_Generator.Config
             var kvp = default(String[]);
             try
             {
-                String AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 using (var sR = new StreamReader(File.OpenRead(path)))
                 {
                     while (!sR.EndOfStream)
                     {
-                        line = sR.ReadLine().Trim().Trim(',').Replace("\"", "");
+                        line = sR.ReadLine();
+                        if (!line.Contains(":"))
+                            continue;
+                        if (line.EndsWith(":"))
+                            continue;
+
                         kvp = line.Split(':');
                         if (kvp.Length == 2)
                         {
-                            if (kvp[0].Trim() == "Skip the Space Pirate Frigate")
-                                this.skipFrigate = kvp[1].Trim() == "On";
-                            if (kvp[0].Trim() == "Heat Protection")
-                                this.heatProtection = kvp[1].Trim();
-                            if (kvp[0].Trim() == "Suit Damage Reduction")
-                                this.suitDamageReduction = kvp[1].Trim();
-                            if (kvp[0].Trim() == "Starting Area")
-                                if(kvp[1].Trim() != "Random")
-                                    if (this.spawnRoom == null)
-                                        this.spawnRoom = SpawnRoom.Values[kvp[1].Trim()];
+                            if (kvp[0].Trim() == "skip frigate")
+                                this.skipFrigate = kvp[1].Trim() == "true";
+                            if (kvp[0].Trim() == "nonvaria heat damage")
+                                this.heatProtection = kvp[1].Trim() == "true" ? "Varia Only" : "Any Suit";
+                            if (kvp[0].Trim() == "staggered suit damage")
+                                this.suitDamageReduction = kvp[1].Trim() == "true" ? "Progressive" : "Default";
+                            if (kvp[0].Trim() == "starting area")
+                                if (this.spawnRoom == null)
+                                    this.spawnRoom = SpawnRoom.Values[kvp[1].Trim()];
                         }
                     }
                 }

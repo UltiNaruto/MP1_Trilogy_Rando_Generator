@@ -20,7 +20,9 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
             // Set default MLVL in case of crash or save corruption
             new Patcher.DOL_Code_Patch<UInt16>(MP1_Dol_Path, 0x8010D278 + 2, MLVL_H).Apply();
             new Patcher.DOL_Code_Patch<UInt16>(MP1_Dol_Path, 0x8010D278 + 14, MLVL_L).Apply();
-            //new Patcher.DOL_Patch<UInt16>(MP1_Dol_Path, 0x8010D27C + 2, (UInt16)spawnRoom.PakIndex).Apply();
+
+            // Doesn't reset intro messages???
+            new Patcher.DOL_Code_Patch<UInt16>(MP1_Dol_Path, 0x8010D27C + 2, (UInt16)0).Apply();
         }
 
         public static void ApplySkipCutscenePatch(bool enabled)
@@ -64,51 +66,34 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
 
             if (enabled)
             {
-                // Restoring dash calculation from GC in CPlayer::ComputeDash
-                new Patcher.DOL_ScrollCode_Patch(MP1_Dol_Path, 0x80193A3C, 0x80193AA4, -4).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A78, (UInt32)0xC042A524).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A80, (UInt32)0xEC210024).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A84, (UInt32)0xFC200210).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A88, (UInt32)0xFC001040).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A8C, (UInt32)0x40810014).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A90, (UInt32)0xC002A52C).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A94, (UInt32)0xC042A4E4).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A98, (UInt32)0xEC020072).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A9C, (UInt32)0xEC010028).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193AA0, (UInt32)0x2C060002).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A6C, (UInt32)0xEF9C0032).Apply();
+                // Stop dash when done with dash
+                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80192CC0, (UInt32)0x801F037C).Apply();
+                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80192CE4, (UInt32)0x60000000).Apply();
+                // Restoring strafeVel self multiply from GC in CPlayer::ComputeDash
+                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A70, (UInt32)0xEF9C0032).Apply();
                 new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193B14, (UInt32)0xEF9C0032).Apply();
             }
             else
             {
-                // Restoring dash calculation from Wii in CPlayer::ComputeDash
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A78, (UInt32)0x2C060002).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A80, (UInt32)0xC042A524).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A84, (UInt32)0xEC010024).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A88, (UInt32)0xFC601050).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A8C, (UInt32)0xEC230028).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A90, (UInt32)0xFC0100EE).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A94, (UInt32)0xEC201028).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A98, (UInt32)0xFC0100AE).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A9C, (UInt32)0xEC420028).Apply();
-                new Patcher.DOL_ScrollCode_Patch(MP1_Dol_Path, 0x80193A3C, 0x80193AA0, 4).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A38, (UInt32)0x2C060002).Apply();
-                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A6C, (UInt32)0xEF9F0032).Apply();
+                // Stop dash when no more locking on lock point
+                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80192CC0, (UInt32)0x801F0300).Apply();
+                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80192CE4, (UInt32)0x40820128).Apply();
+                // Restoring strafeVel limitation from Wii in CPlayer::ComputeDash
+                new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193A70, (UInt32)0xEF9F0032).Apply();
                 new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193B14, (UInt32)0xEF9F0032).Apply();
             }
             // 804D3FA8 804D3FB0
         }
 
         public static void ApplyUnderwaterSlopeJumpFixPatch(bool enabled)
-        {
-            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80192FCC, (UInt32)(enabled ? 0x3AE30000 : 0x7C600034)).Apply();
-            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80192FD4, (UInt32)(enabled ? 0x60000000 : 0x541FD97E)).Apply();
-            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80192FDC, (UInt32)(enabled ? 0x2C170000 : 0x2C030000)).Apply();
-            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x8019557C, (UInt32)(enabled ? 0x60000000 : 0xEC190032)).Apply();
-            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80195580, (UInt32)(enabled ? 0xEC19F03C : 0xEC1E0028)).Apply();
-            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80195698, (UInt32)(enabled ? 0x48000054 : 0xEF3F0072)).Apply();
-            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x801A0B88, (UInt32)(enabled ? 0x2C040028 : 0x28040028)).Apply();
-            //new Patcher.DOL_Value_Patch<Single>(MP1_Dol_Path, 0x804DE0C0, enabled ? -4.15f : -10.0f).Apply();
+        {            
+            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x8019569C, (UInt32)(enabled ? 0x3D40C0F0 : 0x4080002C)).Apply();
+            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x801956A0, (UInt32)(enabled ? 0x3BBD24A1 : 0xEF60E024)).Apply();
+            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x801956A4, (UInt32)(enabled ? 0x3BBD7FFF : 0x7FA3EB78)).Apply();
+            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x801956A8, (UInt32)(enabled ? 0x915D0000 : 0x4BFFD8F5)).Apply();
+            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x801956AC, (UInt32)(enabled ? 0x3BBD8000 : 0xC042A524)).Apply();
+            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x801956B0, (UInt32)(enabled ? 0x3BBDDB60 : 0xEC1B0672)).Apply();
+            new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x801956B4, (UInt32)(enabled ? 0x48000014 : 0xEC42D828)).Apply();
         }
     }
 }

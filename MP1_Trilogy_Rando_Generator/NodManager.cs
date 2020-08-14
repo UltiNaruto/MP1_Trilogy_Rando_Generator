@@ -21,7 +21,8 @@ namespace MP1_Trilogy_Rando_Generator
             {
                 ProcessStartInfo info = new ProcessStartInfo(NOD_PATH, "extract -f \"" + filename + "\" .\\tmp\\"+ (isGC_ISO?"gc":"wii"));
                 info.WorkingDirectory = Directory.GetCurrentDirectory();
-                info.UseShellExecute = true;
+                info.CreateNoWindow = true;
+                info.UseShellExecute = false;
                 Process proc = Process.Start(info);
                 Thread.Sleep(1000);
                 SetWindowText(proc.MainWindowHandle, "Extracting "+(isGC_ISO ? "GC" : "Wii")+" ISO...");
@@ -40,7 +41,8 @@ namespace MP1_Trilogy_Rando_Generator
             {
                 ProcessStartInfo info = new ProcessStartInfo(NOD_PATH, (isGC_ISO?"makegcn .\\tmp\\gc":"makewii .\\tmp\\wii") + " \"" + filename+"\"");
                 info.WorkingDirectory = Directory.GetCurrentDirectory();
-                info.UseShellExecute = true;
+                info.CreateNoWindow = true;
+                info.UseShellExecute = false;
                 Process proc = Process.Start(info);
                 Thread.Sleep(1000);
                 SetWindowText(proc.MainWindowHandle, "Creating " + (isGC_ISO ? "GC" : "Wii") + " ISO...");

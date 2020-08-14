@@ -19,7 +19,8 @@ namespace MP1_Trilogy_Rando_Generator
             {
                 ProcessStartInfo info = new ProcessStartInfo(WIT_PATH, "COPY -d \""+filename+"\" -s .\\tmp\\wii -C  --id " + GameCode);
                 info.WorkingDirectory = Directory.GetCurrentDirectory();
-                info.UseShellExecute = true;
+                info.CreateNoWindow = true;
+                info.UseShellExecute = false;
                 Process proc = Process.Start(info);
                 Thread.Sleep(1000);
                 SetWindowText(proc.MainWindowHandle, "Creating Compressed "+(isGC_ISO ? "GC" : "Wii")+" ISO...");
@@ -38,7 +39,8 @@ namespace MP1_Trilogy_Rando_Generator
             {
                 ProcessStartInfo info = new ProcessStartInfo(WIT_PATH, "COPY -s \".\\tmp\\wii\" -d \"" + filename + "\" -B --id \"" + GameCode + "\"");
                 info.WorkingDirectory = Directory.GetCurrentDirectory();
-                info.UseShellExecute = true;
+                info.CreateNoWindow = true;
+                info.UseShellExecute = false;
                 Process proc = Process.Start(info);
                 Thread.Sleep(1000);
                 SetWindowText(proc.MainWindowHandle, "Creating WBFS...");

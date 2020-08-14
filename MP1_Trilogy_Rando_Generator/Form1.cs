@@ -1,6 +1,7 @@
 ﻿using MP1_Trilogy_Rando_Generator.Patcher;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -57,6 +58,27 @@ namespace MP1_Trilogy_Rando_Generator
             return DeveloperCode;
         }
 
+        void SetProgressStatus(int cur, int max)
+        {
+            if (cur != max)
+            {
+                this.progressBar1.Visible = true;
+                this.progressBar1.Value = (cur * 100) / (max - 1);
+            }
+            else
+            {
+                this.progressBar1.Visible = false;
+                this.progressBar1.Value = 0;
+            }
+            this.progressBar1.Update();
+        }
+
+        void SetStatus(String status)
+        {
+            this.label3.Text = "Status : " + status;
+            this.label3.Update();
+        }
+
         public Form1()
         {
             rand = new Random((int)((DateTime.Now.Ticks / TimeSpan.TicksPerSecond)));
@@ -74,6 +96,14 @@ namespace MP1_Trilogy_Rando_Generator
                 this.button1.Enabled = false;
                 this.button2.Enabled = true;
             }
+            if (appSettings.prime1RandomizerPath.EndsWith(".exe"))
+                this.label2.Text = "BashPrime's Randomizer found!";
+            this.textBox1.Text = appSettings.outputPath;
+            this.comboBox1.SelectedIndex = this.comboBox1.Items.IndexOf(appSettings.outputType);
+        }
+
+        private void helpBtn_Click(object sender, EventArgs e)
+        {
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -144,19 +174,25 @@ namespace MP1_Trilogy_Rando_Generator
                 }
             }
 
-            if(!NodManager.ExtractISO(wii_iso_path, false))
+            SetProgressStatus(0, 4);
+            SetStatus("Extracting Metroid Prime Trilogy ISO...");
+            if (!NodManager.ExtractISO(wii_iso_path, false))
             {
                 MessageBox.Show("Failed extracting wii iso!");
                 return;
             }
 
-            if(!NodManager.ExtractISO(gc_iso_path, true))
+            SetProgressStatus(1, 4);
+            SetStatus("Extracting Metroid Prime ISO...");
+            if (!NodManager.ExtractISO(gc_iso_path, true))
             {
                 Directory.Delete(".\\tmp\\wii", true);
                 MessageBox.Show("Failed extracting gc iso!");
                 return;
             }
 
+            SetProgressStatus(2, 4);
+            SetStatus("Stripping MP2 and MP3 from Metroid Prime Trilogy...");
             File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
             Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe", true);
             Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP2", true);
@@ -168,17 +204,23 @@ namespace MP1_Trilogy_Rando_Generator
 
             foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\MP1", "Metroid*.pak", SearchOption.TopDirectoryOnly))
                 File.Copy(file, ".\\tmp\\gc\\files\\"+Path.GetFileName(file), true);
+            SetProgressStatus(3, 4);
+            SetStatus("Creating Trilogy ISO template to be used with BashPrime's Randomizer");
             NodManager.CreateISO("gc_template.iso", true);
             Directory.Delete(".\\tmp\\gc", true);
-            this.label1.Text = "Trilogy ISO template for Prime 1 Randomizer detected!";
+            this.label1.Text = "Trilogy ISO template for BashPrime's Randomizer detected!";
             this.button1.Enabled = false;
             this.button2.Enabled = true;
-            MessageBox.Show("Done generating the GC template iso!");
+            SetProgressStatus(4, 4);
+            SetStatus("Idle");
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             File.Delete("gc_template.iso");
+            this.label1.Text = "No Trilogy ISO template for BashPrime's Randomizer detected!(Only NTSC - U supported for now)";
+            this.button1.Enabled = true;
+            this.button2.Enabled = false;
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -186,7 +228,7 @@ namespace MP1_Trilogy_Rando_Generator
             var dialogResult = default(DialogResult);
             using (var openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Title = "Select the executable of Prime 1 Randomizer";
+                openFileDialog.Title = "Select the executable of BashPrime's Randomizer";
                 openFileDialog.Filter = "EXE File|*.exe";
                 openFileDialog.FileName = "";
                 openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
@@ -203,9 +245,14 @@ namespace MP1_Trilogy_Rando_Generator
                         }
                         appSettings.prime1RandomizerPath = openFileDialog.FileName;
                         appSettings.SaveToJson();
+                        this.label2.Text = "BashPrime's Randomizer found!";
                     }
                     if (dialogResult == DialogResult.Cancel)
+                    {
+                        if (!appSettings.prime1RandomizerPath.EndsWith(".exe"))
+                            this.label2.Text = "BashPrime's Randomizer not found! (v2.2.2 required at least)";
                         return;
+                    }
                 }
             }
         }
@@ -216,6 +263,7 @@ namespace MP1_Trilogy_Rando_Generator
             var wii_iso_path = default(String);
             var new_wii_iso_path = default(String);
             var gc_iso_filename = default(String);
+            var spoiler_filename = default(String);
             var curDir = default(String);
             var randomizerSettings = default(Config.RandomizerSettings);
 
@@ -227,6 +275,18 @@ namespace MP1_Trilogy_Rando_Generator
                 return;
             }
 
+            if (comboBox1.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select an output type to save the iso in that format!");
+                return;
+            }
+
+            if (this.textBox1.Text == "")
+            {
+                MessageBox.Show("Select a folder to save the "+ comboBox1.SelectedItem + " file !");
+                return;
+            }
+
             if (!Directory.Exists(@".\tmp"))
                 Directory.CreateDirectory(@".\tmp");
 
@@ -234,7 +294,9 @@ namespace MP1_Trilogy_Rando_Generator
             Config.PatchSettings patchSettingsWii = new Config.PatchSettings((curDir + @"\gc_template.iso").Replace("\\", "\\\\"), (curDir + @"\tmp").Replace("\\", "\\\\"));
             patchSettingsWii.SaveToJson();
 
-            if(!RandomizerManager.Run(appSettings.prime1RandomizerPath))
+            SetProgressStatus(0, 5);
+            SetStatus("Running BashPrime's Randomizer...");
+            if (!RandomizerManager.Run(appSettings.prime1RandomizerPath))
             {
                 MessageBox.Show("Prime 1 Randomizer haven't properly exited! Cancelling...");
                 patchSettingsBak.SaveToJson();
@@ -250,20 +312,11 @@ namespace MP1_Trilogy_Rando_Generator
             }
 
             gc_iso_filename = Path.GetFileName(Directory.EnumerateFiles(".\\tmp", "*.iso").First());
-
-            if(!File.Exists(".\\tmp\\"+gc_iso_filename.Replace(".iso", " - Spoiler.json")))
-            {
-                MessageBox.Show("Spoiler is required to get the randomizer settings used!");
-                return;
-            }
-
-            randomizerSettings = new Config.RandomizerSettings(".\\tmp\\" + gc_iso_filename.Replace(".iso", " - Spoiler.json"));
-
-            if (!this.checkBox1.Checked)
-                File.Delete(".\\tmp\\"+gc_iso_filename.Replace(".iso", " - Spoiler.json"));
+            spoiler_filename = Path.ChangeExtension(gc_iso_filename, ".json").Replace(".json", " - Spoiler.json");
 
             if (!Directory.Exists(".\\tmp\\wii"))
             {
+                SetStatus("Extracting Metroid Prime Trilogy ISO...");
                 using (var openFileDialog = new OpenFileDialog())
                 {
                     openFileDialog.Title = "Select a NTSC-U iso of Metroid Prime Trilogy";
@@ -299,6 +352,8 @@ namespace MP1_Trilogy_Rando_Generator
                         return;
                     }
 
+                    SetStatus("Stripping MP2 and MP3 from Metroid Prime Trilogy...");
+
                     File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
                     Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe", true);
                     Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP2", true);
@@ -312,9 +367,17 @@ namespace MP1_Trilogy_Rando_Generator
 
             File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
 
+            SetProgressStatus(1, 5);
+            SetStatus("Extracting randomized ISO...");
+
             NodManager.ExtractISO(".\\tmp\\"+ gc_iso_filename, true);
 
             File.Delete(".\\tmp\\" + gc_iso_filename);
+
+            randomizerSettings = new Config.RandomizerSettings(".\\tmp\\gc\\files\\randomprime.txt");
+
+            SetProgressStatus(2, 5);
+            SetStatus("Replacing original PAKs with randomized PAKs...");
 
             foreach (var file in Directory.EnumerateFiles(".\\tmp\\gc\\files", "Metroid*.pak", SearchOption.TopDirectoryOnly))
                 File.Copy(file, ".\\tmp\\wii\\DATA\\files\\MP1\\" + Path.GetFileName(file), true);
@@ -323,9 +386,12 @@ namespace MP1_Trilogy_Rando_Generator
 
             Directory.Delete(".\\tmp\\gc", true);
 
+            SetProgressStatus(3, 5);
+            SetStatus("Applying patches to MP1 executable...");
+
             /* Applying patches to dol file */
 
-            if(randomizerSettings.skipFrigate)
+            if (randomizerSettings.skipFrigate)
             {
                 if(randomizerSettings.spawnRoom == null)
                 {
@@ -344,36 +410,58 @@ namespace MP1_Trilogy_Rando_Generator
                 return;
             }*/
 
-            Patches.ApplyScanDashPatch(this.checkBox2.Checked);
-            //Patches.ApplyUnderwaterSlopeJumpFixPatch(true);
+            Patches.ApplyScanDashPatch(true);
+            Patches.ApplyUnderwaterSlopeJumpFixPatch(true);
 
             /*  */
 
-            using (var saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.Title = "Save output iso to :";
-                saveFileDialog.Filter = "Wii Compressed ISO File|*.ciso|Wii WBFS File|*.wbfs";
-                saveFileDialog.FileName = Path.ChangeExtension(gc_iso_filename, ".ciso");
-                saveFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
-                if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
-                {
-                    File.Delete(".\\tmp\\" + saveFileDialog.FileName);
-                    return;
-                }
-                new_wii_iso_path = saveFileDialog.FileName;
-            }
 
+            SetProgressStatus(4, 5);
+            SetStatus("Packing Metroid Prime Trilogy to "+ ((String)comboBox1.SelectedItem).Substring(1).ToUpper() + " format...");
             // WIT doesn't like complex paths so make the image in tmp folder then move back to the output folder
-            if (new_wii_iso_path.ToLower().EndsWith(".ciso"))
+            if (((String)comboBox1.SelectedItem).ToLower().EndsWith(".ciso"))
                 WITManager.CreateCompressISO(".\\tmp\\mpt.ciso", false, "R3ME"+RandomizeDeveloperCode());
-            else if (new_wii_iso_path.ToLower().EndsWith(".wbfs"))
+            else if (((String)comboBox1.SelectedItem).ToLower().EndsWith(".wbfs"))
                 WITManager.CreateWBFS(".\\tmp\\mpt.wbfs", "R3ME" + RandomizeDeveloperCode());
 
-            File.Move(".\\tmp\\mpt" + Path.GetExtension(new_wii_iso_path), new_wii_iso_path);
+            File.Move(".\\tmp\\mpt" + (String)comboBox1.SelectedItem, this.textBox1.Text + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + (String)comboBox1.SelectedItem);
 
-            if (this.checkBox1.Checked)
-                File.Copy(".\\tmp\\"+Path.ChangeExtension(gc_iso_filename, ".json").Replace(".json", " - Spoiler.json"), Path.ChangeExtension(new_wii_iso_path, ".json").Replace(".json", " - Spoiler.json"));
+            if (File.Exists(".\\tmp"+ spoiler_filename))
+                File.Move(".\\tmp\\"+ spoiler_filename, Path.GetDirectoryName(new_wii_iso_path) + "\\" + spoiler_filename);
+            SetProgressStatus(5, 5);
+            SetStatus("Idle");
             MessageBox.Show("Game has been randomized! Have fun!");
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            using (var folderBrowserDialog = new FolderBrowserDialog())
+            {
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    this.textBox1.Text = folderBrowserDialog.SelectedPath;
+                    appSettings.outputPath = folderBrowserDialog.SelectedPath;
+                    appSettings.SaveToJson();
+                }
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedIndex != -1)
+            {
+                appSettings.outputType = (String)comboBox1.SelectedItem;
+                appSettings.SaveToJson();
+            }
+        }
+
+        private void helpBtn_Click(object sender, CancelEventArgs e)
+        {
+            try {
+                new HelpForm().ShowDialog();
+            } catch {
+                MessageBox.Show("No wiki files found! Connect to internet to download the wiki files!");
+            }
         }
     }
 }

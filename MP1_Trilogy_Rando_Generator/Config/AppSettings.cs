@@ -7,6 +7,8 @@ namespace MP1_Trilogy_Rando_Generator.Config
     class AppSettings
     {
         public String prime1RandomizerPath;
+        public String outputPath;
+        public String outputType;
 
         public AppSettings()
         {
@@ -25,6 +27,10 @@ namespace MP1_Trilogy_Rando_Generator.Config
                         {
                             if (kvp[0].Groups[1].Value == "prime1RandomizerPath")
                                 this.prime1RandomizerPath = kvp[1].Groups[1].Value;
+                            if (kvp[0].Groups[1].Value == "outputPath")
+                                this.outputPath = kvp[1].Groups[1].Value;
+                            if (kvp[0].Groups[1].Value == "outputType")
+                                this.outputType = kvp[1].Groups[1].Value;
                         }
                     }
                 }
@@ -32,6 +38,8 @@ namespace MP1_Trilogy_Rando_Generator.Config
             catch
             {
                 this.prime1RandomizerPath = "";
+                this.outputPath = "";
+                this.outputType = ".ciso";
                 this.SaveToJson();
             }
         }
@@ -44,7 +52,9 @@ namespace MP1_Trilogy_Rando_Generator.Config
             using (var sW = new StreamWriter(File.OpenWrite(CurDir + @"\settings.json")))
             {
                 sW.WriteLine("{");
-                sW.WriteLine("\t\"prime1RandomizerPath\": \"" + this.prime1RandomizerPath + "\"");
+                sW.WriteLine("\t\"prime1RandomizerPath\": \"" + this.prime1RandomizerPath + "\",");
+                sW.WriteLine("\t\"outputPath\": \"" + this.outputPath + "\",");
+                sW.WriteLine("\t\"outputType\": \"" + this.outputType + "\"");
                 sW.WriteLine("}");
             }
         }
