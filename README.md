@@ -22,7 +22,7 @@ Note 4 : You can't use Progressive option for Suit Damage Reduction yet. It's pl
 
 # FAQ
 Q: May I put any tricks I want?<br/>
-A: As long as it doesn't involve dashing, doing infinite speed, doing underwater slope jumps it should work fine.
+A: As long as it doesn't involve doing infinite speed. However some tricks aren't working. Please refer to our blacklist of tricks.
 
 Q: There's a logic bug, can you fix it?<br/>
 A: If it is because of an enabled trick, make sure to open an issue saying which trick you were expected to do in which room.<br/>
