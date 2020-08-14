@@ -17,8 +17,8 @@ The ISO is now generated. Have fun!<br/>
 
 Note : You need to locate BashPrime's Randomizer just once as it's saved in a config after doing so. The same goes for generating the template ISO.<br/>
 Note 2 : You can delete tmp folder if you want but you should keep it so it doesn't need to reextract the Metroid Prime Trilogy ISO everytime.<br/>
-Note 3 : You need 18 GB or more of free space where this program is placed because it keeps stuff in the tmp folder mentioned above.<br/>
-Note 4 : You can't use Progressive option for Suit Damage Reduction yet. It's planned to be supported later though.
+Note 3 : You need 5 GB or more of free space where this program is placed because it keeps stuff in the tmp folder mentioned above.<br/>
+Note 4 : You can use Progressive option for Suit Damage Reduction but you won't get its effects. It's planned to be supported later though.
 
 # FAQ
 Q: May I put any tricks I want?<br/>
