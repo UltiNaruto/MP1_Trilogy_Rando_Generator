@@ -5,14 +5,14 @@ Generate a randomized ISO using BashPrime's Randomizer (https://github.com/etayl
 First generate a template ISO using Metroid Prime Trilogy NTSC-U ISO and Metroid Prime NTSC 0-00.<br/>
 /!\ It can take up to 10 mins on a 5400 RPM HDD so please be patient.<br/>
 Then click on "Locate BashPrime's Randomizer" and search for the executable of BashPrime's Randomizer.<br/>
+Then setup the path for where you want your ISOs to be saved and the file format you will use (wbfs for Wii or ciso for Dolphin)<br/>
 Then click on "Randomize". It will open BashPrime's Randomizer.<br/>
-Setup the preset as you want. (Although some tricks can't be performed on Trilogy, ex: infinite speed, dashing, underwater slope jump)<br/>
-To generate the needed informations for the output ISO you need to click on "Generate With Spoilers".<br/>
+Setup the preset as you want. (Although some tricks can't be performed on Trilogy, ex: infinite speed)<br/>
+Generate a seed.<br/>
 /!\ Do not change any settings when saving the ISO!<br/>
-Save both spoiler and ISO then quit.<br/>
+Save the ISO (and the spoiler if you have generated one) then quit.<br/>
 If you have deleted tmp/wii, it will ask you to reextract the Trilogy ISO.<br/>
-It will open an Extract GC ISO window. Wait for it to finish.<br/>
-Then it will ask you where to put the output ISO. (It will also copy the spoiler if you checked Save Spoiler earlier)<br/>
+Wait for Status : Idle to be shown again.<br/>
 The ISO is now generated. Have fun!<br/>
 
 Note : You need to locate BashPrime's Randomizer just once as it's saved in a config after doing so. The same goes for generating the template ISO.<br/>
