@@ -63,10 +63,11 @@
       <DependentUpon>HelpForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Patcher\DOL_ScrollCode_Patch.cs" />
+    <Compile Include="Patcher\IDolPatch.cs" />
     <Compile Include="WikiHelper.cs" />
     <Compile Include="WITManager.cs" />
     <Compile Include="NodManager.cs" />
-    <Compile Include="Patcher\DOL_Code_Patch.cs" />
+    <Compile Include="Patcher\DOL_Patch.cs" />
     <Compile Include="Patcher\IPatch.cs" />
     <Compile Include="Patcher\Patches.cs" />
     <Compile Include="Program.cs" />

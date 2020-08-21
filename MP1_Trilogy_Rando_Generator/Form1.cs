@@ -194,9 +194,16 @@ namespace MP1_Trilogy_Rando_Generator
             SetProgressStatus(2, 4);
             SetStatus("Stripping MP2 and MP3 from Metroid Prime Trilogy...");
             File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
-            Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe", true);
-            Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP2", true);
-            Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP3", true);
+            foreach(var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\fe", "*.*", SearchOption.AllDirectories))
+                File.WriteAllText(file, "");
+            foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\MP2", "*.*", SearchOption.AllDirectories))
+                File.WriteAllText(file, "");
+            foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\MP3", "*.*", SearchOption.AllDirectories))
+                File.WriteAllText(file, "");
+
+            foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\", "*.dol", SearchOption.TopDirectoryOnly))
+                if (!file.Contains("rs5mp1_p.dol"))
+                    File.WriteAllText(file, "");
 
             foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\", "*.dol", SearchOption.TopDirectoryOnly))
                 if (!file.Contains("rs5mp1_p.dol"))
@@ -204,6 +211,7 @@ namespace MP1_Trilogy_Rando_Generator
 
             foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\MP1", "Metroid*.pak", SearchOption.TopDirectoryOnly))
                 File.Copy(file, ".\\tmp\\gc\\files\\"+Path.GetFileName(file), true);
+            File.Copy(".\\tmp\\wii\\DATA\\files\\MP1\\NoARAM.pak", ".\\tmp\\gc\\files\\NoARAM.pak", true);
             SetProgressStatus(3, 4);
             SetStatus("Creating Trilogy ISO template to be used with BashPrime's Randomizer");
             NodManager.CreateISO("gc_template.iso", true);
@@ -355,13 +363,17 @@ namespace MP1_Trilogy_Rando_Generator
                     SetStatus("Stripping MP2 and MP3 from Metroid Prime Trilogy...");
 
                     File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
-                    Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe", true);
-                    Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP2", true);
-                    Directory.Delete(".\\tmp\\wii\\DATA\\files\\MP3", true);
+
+                    foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\fe", "*.*", SearchOption.AllDirectories))
+                        File.WriteAllText(file, "");
+                    foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\MP2", "*.*", SearchOption.AllDirectories))
+                        File.WriteAllText(file, "");
+                    foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\MP3", "*.*", SearchOption.AllDirectories))
+                        File.WriteAllText(file, "");
 
                     foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\", "*.dol", SearchOption.TopDirectoryOnly))
                         if(!file.Contains("rs5mp1_p.dol"))
-                            File.Delete(file);
+                            File.WriteAllText(file, "");
                 }
             }
 
@@ -382,6 +394,7 @@ namespace MP1_Trilogy_Rando_Generator
             foreach (var file in Directory.EnumerateFiles(".\\tmp\\gc\\files", "Metroid*.pak", SearchOption.TopDirectoryOnly))
                 File.Copy(file, ".\\tmp\\wii\\DATA\\files\\MP1\\" + Path.GetFileName(file), true);
 
+            File.Copy(".\\tmp\\gc\\files\\NoARAM.pak", ".\\tmp\\wii\\DATA\\files\\MP1\\NoARAM.pak", true);
             File.Copy(".\\tmp\\gc\\files\\randomprime.txt", ".\\tmp\\wii\\DATA\\files\\randomprime.txt", true);
 
             Directory.Delete(".\\tmp\\gc", true);
@@ -403,13 +416,7 @@ namespace MP1_Trilogy_Rando_Generator
 
             Patches.ApplySkipCutscenePatch(true);
             Patches.ApplyHeatProtectionPatch(randomizerSettings.heatProtection);
-
-            /*if (randomizerSettings.suitDamageReduction == "Progressive")
-            {
-                MessageBox.Show("Progressive damage reduction is not yet supported!");
-                return;
-            }*/
-
+            Patches.ApplySuitDamageReductionPatch(randomizerSettings.suitDamageReduction);
             Patches.ApplyScanDashPatch(true);
             Patches.ApplyUnderwaterSlopeJumpFixPatch(true);
 

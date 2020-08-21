@@ -76,7 +76,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 190F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(780, 312);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 316);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -85,7 +85,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(774, 94);
+            this.groupBox1.Size = new System.Drawing.Size(778, 94);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ISO Template";
@@ -103,7 +103,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(768, 75);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(772, 75);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // label1
@@ -112,7 +112,7 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(762, 33);
+            this.label1.Size = new System.Drawing.Size(766, 33);
             this.label1.TabIndex = 0;
             this.label1.Text = "No Trilogy ISO template for Prime 1 Randomizer detected! (Only NTSC-U supported f" +
     "or now)";
@@ -132,16 +132,16 @@
             this.tableLayoutPanel7.RowCount = 1;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(768, 42);
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(772, 42);
             this.tableLayoutPanel7.TabIndex = 3;
             // 
             // button2
             // 
             this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(387, 3);
+            this.button2.Location = new System.Drawing.Point(389, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(378, 36);
+            this.button2.Size = new System.Drawing.Size(380, 36);
             this.button2.TabIndex = 3;
             this.button2.Text = "Delete template ISO";
             this.button2.UseVisualStyleBackColor = true;
@@ -152,7 +152,7 @@
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button1.Location = new System.Drawing.Point(3, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(378, 36);
+            this.button1.Size = new System.Drawing.Size(380, 36);
             this.button1.TabIndex = 2;
             this.button1.Text = "Generate a template ISO for Prime 1 Randomizer";
             this.button1.UseVisualStyleBackColor = true;
@@ -164,7 +164,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(3, 103);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(774, 184);
+            this.groupBox2.Size = new System.Drawing.Size(778, 184);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Randomizer";
@@ -190,7 +190,7 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(768, 165);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(772, 165);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // label5
@@ -199,7 +199,7 @@
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label5.Location = new System.Drawing.Point(3, 113);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(762, 26);
+            this.label5.Size = new System.Drawing.Size(766, 26);
             this.label5.TabIndex = 7;
             this.label5.Text = "Output Type";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -210,7 +210,7 @@
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Location = new System.Drawing.Point(3, 61);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(762, 26);
+            this.label4.Size = new System.Drawing.Size(766, 26);
             this.label4.TabIndex = 4;
             this.label4.Text = "Output Path";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -221,7 +221,7 @@
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label2.Location = new System.Drawing.Point(3, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(762, 29);
+            this.label2.Size = new System.Drawing.Size(766, 29);
             this.label2.TabIndex = 1;
             this.label2.Text = "BashPrime\'s Randomizer not found! (v2.2.2 required at least)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -239,13 +239,13 @@
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 1;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(768, 26);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(772, 26);
             this.tableLayoutPanel5.TabIndex = 5;
             // 
             // button5
             // 
             this.button5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button5.Location = new System.Drawing.Point(671, 3);
+            this.button5.Location = new System.Drawing.Point(675, 3);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(94, 20);
             this.button5.TabIndex = 3;
@@ -258,7 +258,7 @@
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBox1.Location = new System.Drawing.Point(3, 3);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(662, 20);
+            this.textBox1.Size = new System.Drawing.Size(666, 20);
             this.textBox1.TabIndex = 4;
             // 
             // comboBox1
@@ -270,7 +270,7 @@
             ".wbfs"});
             this.comboBox1.Location = new System.Drawing.Point(3, 142);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(762, 21);
+            this.comboBox1.Size = new System.Drawing.Size(766, 21);
             this.comboBox1.TabIndex = 6;
             this.comboBox1.Text = ".ciso";
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
@@ -289,7 +289,7 @@
             this.tableLayoutPanel6.RowCount = 1;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(768, 32);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(772, 32);
             this.tableLayoutPanel6.TabIndex = 8;
             // 
             // button3
@@ -297,7 +297,7 @@
             this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button3.Location = new System.Drawing.Point(3, 3);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(378, 26);
+            this.button3.Size = new System.Drawing.Size(380, 26);
             this.button3.TabIndex = 3;
             this.button3.Text = "Locate BashPrime\'s Randomizer";
             this.button3.UseVisualStyleBackColor = true;
@@ -306,9 +306,9 @@
             // button4
             // 
             this.button4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button4.Location = new System.Drawing.Point(387, 3);
+            this.button4.Location = new System.Drawing.Point(389, 3);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(378, 26);
+            this.button4.Size = new System.Drawing.Size(380, 26);
             this.button4.TabIndex = 3;
             this.button4.Text = "Randomize";
             this.button4.UseVisualStyleBackColor = true;
@@ -328,7 +328,7 @@
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(780, 26);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(784, 26);
             this.tableLayoutPanel4.TabIndex = 5;
             // 
             // label3
@@ -336,7 +336,7 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Location = new System.Drawing.Point(3, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(384, 26);
+            this.label3.Size = new System.Drawing.Size(386, 26);
             this.label3.TabIndex = 5;
             this.label3.Text = "Status : Idle";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -344,9 +344,9 @@
             // progressBar1
             // 
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.progressBar1.Location = new System.Drawing.Point(393, 3);
+            this.progressBar1.Location = new System.Drawing.Point(395, 3);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(384, 20);
+            this.progressBar1.Size = new System.Drawing.Size(386, 20);
             this.progressBar1.TabIndex = 6;
             this.progressBar1.Visible = false;
             // 
@@ -364,7 +364,7 @@
             this.MinimumSize = new System.Drawing.Size(800, 355);
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.3";
+            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.4";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.helpBtn_Click);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);

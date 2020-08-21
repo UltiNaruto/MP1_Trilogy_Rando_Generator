@@ -5,23 +5,16 @@ using System.Text;
 
 namespace MP1_Trilogy_Rando_Generator.Patcher
 {
-    class DOL_Code_Patch<T> : IPatch
+    class DOL_Patch<T> : IDolPatch
     {
-        const UInt32 MEM_BASE_ADDR = 0x80000000;
-        const UInt32 MEM_DOL_START_ADDR = MEM_BASE_ADDR + 0x3F00;
-        const UInt32 MEM_DOL_END_ADDR = MEM_DOL_START_ADDR + 0x132C100;
-        const UInt32 MEM_ADDR_TO_FILE_ADDR = 0x3FA0;
-
         private readonly String Path;
         private readonly UInt32 Address;
         private readonly Object Value;
 
-        public DOL_Code_Patch(String path, UInt32 addr, T val)
+        public DOL_Patch(String path, UInt32 addr, T val) : base(path)
         {
-            if (addr < MEM_DOL_START_ADDR || addr > MEM_DOL_END_ADDR)
-                throw new Exception("addr out of memory boundaries");
             this.Path = path;
-            this.Address = addr - MEM_BASE_ADDR - MEM_ADDR_TO_FILE_ADDR;
+            this.Address = addr;
             this.Value = val;
         }
 
@@ -55,7 +48,9 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
 
                 using (var bW = new BinaryWriter(File.OpenWrite(filePath)))
                 {
-                    bW.BaseStream.Position = off;
+                    bW.BaseStream.Position = this.GetFileAddress(off);
+                    if (bW.BaseStream.Position == 0)
+                        throw new Exception("Cannot patch at "+String.Format("0x{0:X8}", off)+"!\nMemory block isn't pre initialized!");
                     if (buf != null)
                         bW.Write(buf);
                 }
