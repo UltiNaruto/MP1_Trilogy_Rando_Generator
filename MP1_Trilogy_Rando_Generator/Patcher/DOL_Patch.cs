@@ -44,7 +44,7 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
                 if (val.GetType() == typeof(Double))
                     buf = BitConverter.GetBytes((Double)val).Reverse().ToArray();
                 if (val.GetType() == typeof(String))
-                    buf = Encoding.ASCII.GetBytes((String)val);
+                    buf = Encoding.ASCII.GetBytes(((String)val).ToCharArray(), 0, ((String)val).Length);
 
                 using (var bW = new BinaryWriter(File.OpenWrite(filePath)))
                 {

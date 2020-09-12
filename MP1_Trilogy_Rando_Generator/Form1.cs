@@ -103,7 +103,6 @@ namespace MP1_Trilogy_Rando_Generator
         private void button1_Click(object sender, EventArgs e)
         {
             var wii_iso_path = default(String);
-            var gc_iso_path = default(String);
 
             MessageBox.Show(@"/!\ This operation can take 10 mins or more on a 5400 RPM HDD. So please be patient!");
 
@@ -140,76 +139,79 @@ namespace MP1_Trilogy_Rando_Generator
                     if (dialogResult == DialogResult.Cancel)
                         return;
                 }
-
-                openFileDialog.Title = "Select a NTSC 0-00 iso of Metroid Prime";
-                openFileDialog.Filter = "GC ISO File|*.iso";
-                openFileDialog.FileName = "";
-                openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
-                while (!openFileDialog.FileName.ToLower().EndsWith(".iso"))
-                {
-                    dialogResult = openFileDialog.ShowDialog();
-                    if (dialogResult == DialogResult.OK)
-                    {
-                        if (!openFileDialog.FileName.ToLower().EndsWith(".iso"))
-                        {
-                            openFileDialog.FileName = "";
-                            MessageBox.Show("Select a GC iso");
-                            continue;
-                        }
-                        if (!IsMetroidPrimeNTSC(openFileDialog.FileName))
-                        {
-                            openFileDialog.FileName = "";
-                            MessageBox.Show("Select a Metroid Prime NTSC 0-00 iso");
-                            continue;
-                        }
-                        gc_iso_path = openFileDialog.FileName;
-                    }
-                    if (dialogResult == DialogResult.Cancel)
-                        return;
-                }
             }
 
-            SetProgressStatus(0, 4);
+            SetProgressStatus(0, 5);
             SetStatus("Extracting Metroid Prime Trilogy ISO...");
             if (!NodManager.ExtractISO(wii_iso_path, false))
             {
                 MessageBox.Show("Failed extracting wii iso!");
+                SetProgressStatus(5, 5);
+                SetStatus("Idle");
                 return;
             }
 
-            SetProgressStatus(1, 4);
-            SetStatus("Extracting Metroid Prime ISO...");
-            if (!NodManager.ExtractISO(gc_iso_path, true))
-            {
-                Directory.Delete(".\\tmp\\wii", true);
-                MessageBox.Show("Failed extracting gc iso!");
-                return;
-            }
-
-            SetProgressStatus(2, 4);
-            SetStatus("Stripping MP2 and MP3 from Metroid Prime Trilogy...");
-
-            FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\fe", true);
-            FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\MP2", true);
-            FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\MP3", true);
-            FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\", "*.dol", "rs5mp1_p.dol");
-            foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\MP1", "Metroid*.pak", SearchOption.TopDirectoryOnly))
-                File.Copy(file, ".\\tmp\\gc\\files\\"+Path.GetFileName(file), true);
-            File.Copy(".\\tmp\\wii\\DATA\\files\\MP1\\NoARAM.pak", ".\\tmp\\gc\\files\\NoARAM.pak", true);
+            SetProgressStatus(1, 5);
+            SetStatus("Backing up DOLs from Metroid Prime Trilogy...");
+            
             if (!Directory.Exists(".\\tmp\\dol_backup\\"))
                 Directory.CreateDirectory(".\\tmp\\dol_backup\\");
-            File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\dol_backup\\rs5mp1_p.dol", true);
 
-            SetProgressStatus(3, 4);
+            File.Copy(".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", ".\\tmp\\dol_backup\\rs5mp1_p.dol", true);
+            File.Copy(".\\tmp\\wii\\DATA\\files\\rs5fe_p.dol", ".\\tmp\\dol_backup\\rs5fe_p.dol", true);
+            
+            SetProgressStatus(2, 5);
+            SetStatus("Stripping MP2 and MP3 from Metroid Prime Trilogy...");
+            
+            //FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\fe", true);
+            FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\MP2", true);
+            FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\MP3", true);
+            FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\", "*.dol", "rs5mp1_p.dol", "rs5fe_p.dol");
+            File.WriteAllBytes(".\\tmp\\wii\\DATA\\files\\fe\\Video\\FrontEnd\\attract01.thp", Properties.Resources.dummy);
+            File.WriteAllBytes(".\\tmp\\wii\\DATA\\files\\fe\\Video\\FrontEnd\\Attract02.thp", Properties.Resources.dummy);
+            File.WriteAllBytes(".\\tmp\\wii\\DATA\\files\\fe\\Video\\mp1\\attract01.thp", Properties.Resources.dummy);
+            File.WriteAllBytes(".\\tmp\\wii\\DATA\\files\\fe\\Video\\mp1\\Attract02.thp", Properties.Resources.dummy);
+            Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe\\Video\\mp2", true);
+            foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\fe\\Video\\FrontEnd", "Menu_To_Game_MP2_*.thp"))
+                File.Delete(file);
+            foreach (var file in Directory.EnumerateFiles(".\\tmp\\wii\\DATA\\files\\fe\\Video\\FrontEnd", "Menu_To_Game_MP3_*.thp"))
+                File.Delete(file);
+            Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe\\Audio\\MP1_Bonus", true);
+            Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe\\Audio\\MP2_Bonus", true);
+            Directory.Delete(".\\tmp\\wii\\DATA\\files\\fe\\Audio\\MP3_Bonus", true);
+
+            SetProgressStatus(3, 5);
+            SetStatus("Copying resources from Metroid Prime Trilogy to Template ISO...");
+
+            Directory.CreateDirectory(".\\tmp\\gc\\files");
+            Directory.CreateDirectory(".\\tmp\\gc\\sys");
+            DirectoryUtils.Copy(".\\tmp\\wii\\DATA\\files\\MP1", ".\\tmp\\gc\\files\\", true);
+            Directory.Delete(".\\tmp\\gc\\files\\RSO", true);
+            Directory.Delete(".\\tmp\\gc\\files\\rhbm", true);
+            File.Copy(".\\tmp\\dol_backup\\rs5mp1_p.dol", ".\\tmp\\gc\\files\\default.dol", true);
+            DirectoryUtils.Copy(".\\tmp\\wii\\DATA\\sys", ".\\tmp\\gc\\sys\\", true);
+            File.Copy(".\\tmp\\dol_backup\\rs5mp1_p.dol", ".\\tmp\\gc\\sys\\main.dol", true);
+            FileUtils.Write<UInt32>(".\\tmp\\gc\\sys\\boot.bin", 0x18, (UInt32)0, true);
+            FileUtils.Write<UInt32>(".\\tmp\\gc\\sys\\boot.bin", 0x1C, (UInt32)0xC2339F3D, true);
+            File.WriteAllBytes(".\\tmp\\gc\\files\\Video\\02_start_fileselect_A.thp", Properties.Resources.dummy);
+            File.WriteAllBytes(".\\tmp\\gc\\files\\Video\\02_start_fileselect_B.thp", Properties.Resources.dummy);
+            File.WriteAllBytes(".\\tmp\\gc\\files\\Video\\02_start_fileselect_C.thp", Properties.Resources.dummy);
+            File.WriteAllBytes(".\\tmp\\gc\\files\\Video\\04_fileselect_playgame_A.thp", Properties.Resources.dummy);
+            File.WriteAllBytes(".\\tmp\\gc\\files\\Video\\04_fileselect_playgame_B.thp", Properties.Resources.dummy);
+            File.WriteAllBytes(".\\tmp\\gc\\files\\Video\\04_fileselect_playgame_C.thp", Properties.Resources.dummy);
+
+            SetProgressStatus(4, 5);
             SetStatus("Creating Trilogy ISO template to be used with BashPrime's Randomizer");
 
-            NodManager.CreateISO("gc_template.iso", true, "R3ME01");
+            NodManager.CreateISO("gc_template.iso", true, FileUtils.Read<String>(".\\tmp\\gc\\sys\\boot.bin", 0, 6) as String);
+
+            SetProgressStatus(5, 5);
+            SetStatus("Idle");
+            
             Directory.Delete(".\\tmp\\gc", true);
             this.label1.Text = "Trilogy ISO template for BashPrime's Randomizer detected!";
             this.button1.Enabled = false;
             this.button2.Enabled = true;
-            SetProgressStatus(4, 4);
-            SetStatus("Idle");
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -261,7 +263,9 @@ namespace MP1_Trilogy_Rando_Generator
             var new_wii_iso_path = default(String);
             var gc_iso_filename = default(String);
             var spoiler_filename = default(String);
+            var DevCode = default(String);
 
+            String GameSettingsDolphinEmuPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar+ "Dolphin Emulator" + Path.DirectorySeparatorChar + "GameSettings" + Path.DirectorySeparatorChar;
             String curDir = Directory.GetCurrentDirectory();
 
             if (!IsTemplateISOGenerated())
@@ -336,7 +340,8 @@ namespace MP1_Trilogy_Rando_Generator
                 SetProgressStatus(2, 5);
                 SetStatus("Replacing original PAKs with randomized PAKs...", i, gc_iso_files.Length);
 
-                File.Copy(".\\tmp\\dol_backup\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
+                File.Copy(".\\tmp\\dol_backup\\rs5fe_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
+                File.Copy(".\\tmp\\dol_backup\\rs5fe_p.dol", ".\\tmp\\wii\\DATA\\files\\rs5fe_p.dol", true);
                 File.Copy(".\\tmp\\dol_backup\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", true);
 
                 foreach (var file in Directory.EnumerateFiles(".\\tmp\\gc\\files", "Metroid*.pak", SearchOption.TopDirectoryOnly))
@@ -364,12 +369,15 @@ namespace MP1_Trilogy_Rando_Generator
                     Patches.SetStartingArea(randomizerSettings.spawnRoom);
                 }
 
+                DevCode = RandomizeDeveloperCode();
+
                 //Patches.DisableHintSystem(true);
                 Patches.ApplySkipCutscenePatch(true);
                 Patches.ApplyHeatProtectionPatch(randomizerSettings.heatProtection);
                 Patches.ApplySuitDamageReductionPatch(randomizerSettings.suitDamageReduction);
                 Patches.ApplyScanDashPatch(true);
                 Patches.ApplyUnderwaterSlopeJumpFixPatch(true);
+                Patches.SetSaveFilename(DevCode + ".bin");
                 //Patches.ApplyLJumpFixPatch(true);
 
                 /*  */
@@ -378,9 +386,13 @@ namespace MP1_Trilogy_Rando_Generator
                 SetStatus("Packing Metroid Prime Trilogy to " + ((String)comboBox1.SelectedItem).Substring(1).ToUpper() + " format...", i, gc_iso_files.Length);
                 // WIT doesn't like complex paths so make the image in tmp folder then move back to the output folder
                 if (((String)comboBox1.SelectedItem).ToLower().EndsWith(".ciso"))
-                    WITManager.CreateCompressISO(".\\tmp\\mpt.ciso", false, "R3ME" + RandomizeDeveloperCode());
+                {
+                    WITManager.CreateCompressISO(".\\tmp\\mpt.ciso", false, "R3ME" + DevCode);
+                    if (File.Exists(GameSettingsDolphinEmuPath + "R3ME01.ini"))
+                        File.Copy(GameSettingsDolphinEmuPath + "R3ME01.ini", GameSettingsDolphinEmuPath + "R3ME" + DevCode + ".ini");
+                }
                 else if (((String)comboBox1.SelectedItem).ToLower().EndsWith(".wbfs"))
-                    WITManager.CreateWBFS(".\\tmp\\mpt.wbfs", "R3ME" + RandomizeDeveloperCode());
+                    WITManager.CreateWBFS(".\\tmp\\mpt.wbfs", "R3ME" + DevCode);
 
                 if (File.Exists(this.textBox1.Text + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + (String)comboBox1.SelectedItem))
                     File.Delete(this.textBox1.Text + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + (String)comboBox1.SelectedItem);

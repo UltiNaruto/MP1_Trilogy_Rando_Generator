@@ -364,7 +364,7 @@
             this.MinimumSize = new System.Drawing.Size(800, 355);
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.5";
+            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.6";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.helpBtn_Click);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);

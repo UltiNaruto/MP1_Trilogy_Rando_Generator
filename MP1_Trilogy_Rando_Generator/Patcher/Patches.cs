@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace MP1_Trilogy_Rando_Generator.Patcher
 {
     // Add suit damage reduction patch
     class Patches
     {
-        static String MP1_Dol_Path = ".\\tmp\\wii\\DATA\\sys\\main.dol";
+        static String MP1_Dol_Path = ".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol";
+        static String FE_Dol_Path = ".\\tmp\\wii\\DATA\\files\\rs5fe_p.dol";
+        static String Main_Dol_Path = ".\\tmp\\wii\\DATA\\sys\\main.dol";
 
         public static void SetStartingArea(Enums.SpawnRoom spawnRoom)
         {
@@ -177,6 +180,19 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
 
             // Patch return of CPlayer::UpdateOrbitInput because it doesn't call the function but rather jump to it
             new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x8019BDB4, (UInt32)(enabled ? 0x428098EC : 0x4E800020)).Apply();
+        }
+
+        public static void SetSaveFilename(String filename = "save.bin")
+        {
+            if (!filename.EndsWith(".bin"))
+                return;
+            if (filename.Length > 8)
+                return;
+            while (filename.Length < 8)
+                filename += "\0";
+            new Patcher.DOL_Patch<String>(FE_Dol_Path, 0x8052FBA8, filename).Apply();
+            new Patcher.DOL_Patch<String>(Main_Dol_Path, 0x8052FBA8, filename).Apply();
+            new Patcher.DOL_Patch<String>(MP1_Dol_Path, 0x80475D48, filename).Apply();
         }
     }
 }

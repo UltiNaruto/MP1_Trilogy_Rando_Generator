@@ -64,6 +64,7 @@
     </Compile>
     <Compile Include="Patcher\DOL_ScrollCode_Patch.cs" />
     <Compile Include="Patcher\IDolPatch.cs" />
+    <Compile Include="Utils\DirectoryUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="WebClientPlus.cs">
       <SubType>Component</SubType>
@@ -91,7 +92,9 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="embed_res\dummy.thp" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
