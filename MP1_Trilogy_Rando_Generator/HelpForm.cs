@@ -11,9 +11,12 @@ namespace MP1_Trilogy_Rando_Generator
         {
             try
             {
-                using (var client = new WebClient())
-                using (client.OpenRead("http://google.com/generate_204"))
-                    return true;
+                using (var client = new WebClientPlus())
+                {
+                    client.Timeout = (int)TimeSpan.FromSeconds(1.0).TotalMilliseconds;
+                    using (client.OpenRead("http://google.com/generate_204"))
+                        return true;
+                }
             }
             catch
             {

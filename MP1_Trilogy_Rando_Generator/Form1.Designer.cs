@@ -143,7 +143,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(380, 36);
             this.button2.TabIndex = 3;
-            this.button2.Text = "Delete template ISO";
+            this.button2.Text = "Delete cache (Template ISO + tmp folder)\r\n";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -364,7 +364,7 @@
             this.MinimumSize = new System.Drawing.Size(800, 355);
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.4";
+            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.5";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.helpBtn_Click);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);

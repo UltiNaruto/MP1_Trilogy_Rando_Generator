@@ -26,6 +26,14 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
             //new Patcher.DOL_Code_Patch<UInt16>(MP1_Dol_Path, 0x8010D27C + 2, (UInt16)0).Apply();
         }
 
+        public static void DisableHintSystem(bool enabled)
+        {
+            /*if(enabled)
+                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80197268, (UInt32)0x4E800020).Apply(); // blr
+              else
+                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80197268, (UInt32)0x9421FFB0).Apply(); // stwu r1, -0x50(r1)*/
+        }
+
         public static void ApplySkipCutscenePatch(bool enabled)
         {
             UInt32 addr = 0x801FC70C;
@@ -36,7 +44,7 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
             }
             else
             {
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr, (UInt32)0x9421FFE0).Apply(); // stwu r1, local_20(r1)
+                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr, (UInt32)0x9421FFE0).Apply(); // stwu r1, -0x20(r1)
                 new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + 4, (UInt32)0x7C0802A6).Apply(); // mfspr r0, LR
             }
         }
@@ -108,25 +116,17 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
         public static void ApplyScanDashPatch(bool enabled)
         {
             new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801932FC + 0x38, (UInt32)(enabled ? 0x48000018 : 0x41820010)).Apply();
-            //new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80194AF0 + 0x70, (UInt32)(enabled ? 0x4800001C : 0x4082001C)).Apply();
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80194AF0 + 0x70, (UInt32)(enabled ? 0x4800001C : 0x4082001C)).Apply();
 
             if (enabled)
             {
                 // Stop dash when done with dash
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80192CC0, (UInt32)0x801F025C).Apply();
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80192CE4, (UInt32)0x60000000).Apply();
-                // Restoring strafeVel self multiply from GC in CPlayer::ComputeDash
-                //new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80193A70, (UInt32)0xEF9C0032).Apply();
-                //new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193B14, (UInt32)0xEF9C0032).Apply();
+                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80192CC0, (UInt32)0x801F037C).Apply();
             }
             else
             {
                 // Stop dash when no more locking on lock point
                 new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80192CC0, (UInt32)0x801F0300).Apply();
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80192CE4, (UInt32)0x40820128).Apply();
-                // Restoring strafeVel limitation from Wii in CPlayer::ComputeDash
-                //new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80193A70, (UInt32)0xEF9F0032).Apply();
-                //new Patcher.DOL_Code_Patch<UInt32>(MP1_Dol_Path, 0x80193B14, (UInt32)0xEF9F0032).Apply();
             }
             // 804D3FA8 804D3FB0
         }
@@ -140,6 +140,43 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
             new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956AC, (UInt32)(enabled ? 0x3BBD8000 : 0xC042A524)).Apply();
             new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956B0, (UInt32)(enabled ? 0x3BBDDB60 : 0xEC1B0672)).Apply();
             new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956B4, (UInt32)(enabled ? 0x48000014 : 0xEC42D828)).Apply();
+        }
+        
+        public static void ApplySpringBallPatch(bool enabled)
+        {
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80147688, (UInt32)(enabled ? 0x60000000 : 0x40820008)).Apply();
+        }
+        
+        public static void ApplyLJumpFixPatch(bool enabled)
+        {
+            // Jump to our subroutine then call CPlayer::UpdateOrbitInput do our stuff and return to CPlayer::ProcessInput
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80182EB8, (UInt32)(enabled ? 0x480127E4 : 0x4801881D)).Apply();
+
+            // Check if Z Button or DPad Up were pressed
+            //new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80194680, (UInt32)(enabled ? 0x801D1060 : 0x801D0300)).Apply();
+            
+            if(enabled)
+                new Patcher.DOL_ScrollCode_Patch(MP1_Dol_Path, 0x8019568C, 0x801956C8, -4).Apply();
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80195698, (UInt32)(enabled ? 0x48000030 : 0x4080002C)).Apply(); // jmp to 801956C8
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x8019569C, (UInt32)(enabled ? 0x48006038 : 0xEF60E024)).Apply(); // bl CPlayer::UpdateOrbitInput
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956A0, (UInt32)(enabled ? 0x89DD1074 : 0x7FA3EB78)).Apply(); // lbz r14, CPlayer[0x1074] aka DPad Up
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956A4, (UInt32)(enabled ? 0x89FD109B : 0x4BFFD8F5)).Apply(); // lbz r15, CPlayer[0x109B] aka Z Button
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956A8, (UInt32)(enabled ? 0x7DEE7378 : 0xC042A524)).Apply(); // set r14 to CPlayer[0x1074] or CPlayer[0x109B]
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956AC, (UInt32)(enabled ? 0x39E00001 : 0xEC1B0672)).Apply(); // li r15, 1
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956B0, (UInt32)(enabled ? 0x7DCE7830 : 0xEC42D828)).Apply(); // multiply r14 by 2
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956B4, (UInt32)(enabled ? 0x91DD0300 : 0xEC220072)).Apply(); // set CPlayer[0x300] to r14
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956B8, (UInt32)(enabled ? 0x60000000 : 0xEC2106B2)).Apply(); // 
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956BC, (UInt32)(enabled ? 0x60000000 : 0xEC20082A)).Apply(); //
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956C0, (UInt32)(enabled ? 0x60000000 : 0x48000028)).Apply(); //
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956C4, (UInt32)(enabled ? 0x4BFED7F8 : 0x60000000)).Apply(); // jump back to CPlayer::ProcessInput
+            if(!enabled)
+            {
+                new Patcher.DOL_ScrollCode_Patch(MP1_Dol_Path, 0x80195688, 0x801956C4, 4).Apply();
+                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80195688, 0xFC00E040).Apply();
+            }
+
+            // Patch return of CPlayer::UpdateOrbitInput because it doesn't call the function but rather jump to it
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x8019BDB4, (UInt32)(enabled ? 0x428098EC : 0x4E800020)).Apply();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace MP1_Trilogy_Rando_Generator
 
             URLList = new List<String>();
 
-            using (var client = new WebClient())
+            using (var client = new WebClientPlus())
             {
                 homeHTML = client.DownloadString(homePage);
                 reg_result = Regex.Matches(homeHTML, @"href=\""(.*?)\""", RegexOptions.Singleline);
@@ -84,7 +84,7 @@ namespace MP1_Trilogy_Rando_Generator
             if (!Directory.Exists(".\\wiki"))
                 Directory.CreateDirectory(".\\wiki");
 
-            using (var client = new WebClient())
+            using (var client = new WebClientPlus())
             {
                 foreach (var URL in URLs)
                 {
@@ -101,6 +101,7 @@ namespace MP1_Trilogy_Rando_Generator
                     HTML = RemoveTag(HTML, "<div class=\"width-full input-group\">");
                     HTML = RemoveTag(HTML, "<a href=\"/UltiNaruto/MP1_Trilogy_Rando_Generator/wiki/" + FileName + "/_history\" class=\"muted-link\">");
                     HTML = RemoveTag(HTML, "<div class=\"mt-0 mt-lg-1 flex-shrink-0 gh-header-actions\">");
+                    HTML = RemoveTag(HTML, "<template class=\"js-flash-template\">");
                     foreach (var _URL in URLs)
                     {
                         _FileName = _URL.Substring(_URL.LastIndexOf("/") + 1);

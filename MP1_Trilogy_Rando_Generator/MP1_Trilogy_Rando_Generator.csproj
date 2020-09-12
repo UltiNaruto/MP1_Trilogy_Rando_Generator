@@ -64,7 +64,11 @@
     </Compile>
     <Compile Include="Patcher\DOL_ScrollCode_Patch.cs" />
     <Compile Include="Patcher\IDolPatch.cs" />
-    <Compile Include="WikiHelper.cs" />
+    <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="WebClientPlus.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Wiki\WikiHelper.cs" />
     <Compile Include="WITManager.cs" />
     <Compile Include="NodManager.cs" />
     <Compile Include="Patcher\DOL_Patch.cs" />
