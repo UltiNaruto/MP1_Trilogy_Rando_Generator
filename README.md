@@ -2,23 +2,21 @@
 Generate a randomized ISO using BashPrime's Randomizer (https://github.com/etaylor8086/metroid-prime-randomizer/releases/latest) from a Metroid Prime Trilogy NTSC-U ISO
 
 # Usage
-First generate a template ISO using Metroid Prime Trilogy NTSC-U ISO and Metroid Prime NTSC 0-00.<br/>
+First generate a template ISO using Metroid Prime Trilogy NTSC-U ISO and Metroid Prime NTSC.<br/>
 /!\ It can take up to 10 mins on a 5400 RPM HDD so please be patient.<br/>
 Then click on "Locate BashPrime's Randomizer" and search for the executable of BashPrime's Randomizer.<br/>
-Then setup the path for where you want your ISOs to be saved and the file format you will use (wbfs for Wii or ciso for Dolphin)<br/>
+Then setup the path for where you want your ISOs to be saved and the file format you will use (wbfs for Wii/vWii or ciso for Dolphin)<br/>
 Then click on "Randomize". It will open BashPrime's Randomizer.<br/>
-Setup the preset as you want. (Although some tricks can't be performed on Trilogy, ex: infinite speed)<br/>
-Generate a seed.<br/>
+Generate a seed with/without spoiler or import a permalink.<br/>
+Setup the preset as you want if you generate it. (Although some tricks can't be performed on Trilogy, ex: infinite speed)<br/>
 /!\ Do not change any settings when saving the ISO!<br/>
-Save the ISO (and the spoiler if you have generated one) then quit.<br/>
-If you have deleted tmp/wii, it will ask you to reextract the Trilogy ISO.<br/>
+Save the ISO then quit.<br/>
 Wait for Status : Idle to be shown again.<br/>
 The ISO is now generated. Have fun!<br/>
 
 Note : You need to locate BashPrime's Randomizer just once as it's saved in a config after doing so. The same goes for generating the template ISO.<br/>
 Note 2 : You can delete tmp folder if you want but you should keep it so it doesn't need to reextract the Metroid Prime Trilogy ISO everytime.<br/>
-Note 3 : You need 5 GB or more of free space where this program is placed because it keeps stuff in the tmp folder mentioned above.<br/>
-Note 4 : You can use Progressive option for Suit Damage Reduction but you won't get its effects. It's planned to be supported later though.
+Note 3 : You need 5 GB or more of free space where this program is placed because it keeps stuff in the tmp folder mentioned above. (16 gb more since you need to extract the wii ISO)
 
 # FAQ
 Q: May I put any tricks I want?<br/>
