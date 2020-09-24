@@ -2,7 +2,7 @@
 Generate a randomized ISO using BashPrime's Randomizer (https://github.com/etaylor8086/metroid-prime-randomizer/releases/latest) from a Metroid Prime Trilogy NTSC-U ISO
 
 # Usage
-First generate a template ISO using Metroid Prime Trilogy NTSC-U ISO and Metroid Prime NTSC.<br/>
+First generate a template ISO using Metroid Prime Trilogy NTSC-U ISO.<br/>
 /!\ It can take up to 10 mins on a 5400 RPM HDD so please be patient.<br/>
 Then click on "Locate BashPrime's Randomizer" and search for the executable of BashPrime's Randomizer.<br/>
 Then setup the path for where you want your ISOs to be saved and the file format you will use (wbfs for Wii/vWii or ciso for Dolphin)<br/>
