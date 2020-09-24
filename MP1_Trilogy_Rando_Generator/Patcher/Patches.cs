@@ -1,14 +1,28 @@
 ﻿using System;
-using System.Windows.Forms;
 
 namespace MP1_Trilogy_Rando_Generator.Patcher
 {
     // Add suit damage reduction patch
     class Patches
     {
-        static String MP1_Dol_Path = ".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol";
+        internal static String MP1_Dol_Path = ".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol";
         static String FE_Dol_Path = ".\\tmp\\wii\\DATA\\files\\rs5fe_p.dol";
         static String Main_Dol_Path = ".\\tmp\\wii\\DATA\\sys\\main.dol";
+
+        static UInt32 MakeJMP(UInt32 src, UInt32 dst)
+        {
+            return (UInt32)(0x48000000 + (dst - src));
+        }
+
+        static void WriteFunction(UInt32 address, UInt32[] opcodes)
+        {
+            UInt32 max_opcodes = (0x800 - (address - 0x80001800)) / 4;
+            if (opcodes.Length > max_opcodes)
+                throw new Exception("Cannot create function there's not enough memory allocated in that section");
+
+            for (int i = 0; i < opcodes.Length; i++)
+                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, (UInt32)(address + i * 4), opcodes[i]).Apply();
+        }
 
         public static void SetStartingArea(Enums.SpawnRoom spawnRoom)
         {
@@ -24,12 +38,9 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
             // Set default MLVL in case of crash or save corruption
             new Patcher.DOL_Patch<UInt16>(MP1_Dol_Path, 0x8010D278 + 2, MLVL_H).Apply();
             new Patcher.DOL_Patch<UInt16>(MP1_Dol_Path, 0x8010D278 + 14, MLVL_L).Apply();
-
-            // Doesn't reset intro messages???
-            //new Patcher.DOL_Code_Patch<UInt16>(MP1_Dol_Path, 0x8010D27C + 2, (UInt16)0).Apply();
         }
 
-        public static void DisableHintSystem(bool enabled)
+        public static void ApplyDisableHintSystemPatch()
         {
             /*if(enabled)
                 new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80197268, (UInt32)0x4E800020).Apply(); // blr
@@ -37,33 +48,17 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
                 new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80197268, (UInt32)0x9421FFB0).Apply(); // stwu r1, -0x50(r1)*/
         }
 
-        public static void ApplySkipCutscenePatch(bool enabled)
+        public static void ApplySkipCutscenePatch()
         {
             UInt32 addr = 0x801FC70C;
-            if (enabled)
-            {
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr, (UInt32)0x38600001).Apply(); // li r3, 1
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + 4, (UInt32)0x4E800020).Apply(); // blr
-            }
-            else
-            {
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr, (UInt32)0x9421FFE0).Apply(); // stwu r1, -0x20(r1)
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + 4, (UInt32)0x7C0802A6).Apply(); // mfspr r0, LR
-            }
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr, (UInt32)0x38600001).Apply(); // li r3, 1
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + 4, (UInt32)0x4E800020).Apply(); // blr
         }
 
         public static void ApplyHeatProtectionPatch(String type)
         {
             UInt32 addr = 0x801FEBCC;
             UInt32 off = 0x48;
-            if (type == "Any Suit")
-            {
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off, (UInt32)0x7C0800D0).Apply(); // neg r0, r8
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 4, (UInt32)0x7C004078).Apply(); // andc r0, r0, r8
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 8, (UInt32)0x7CC63850).Apply(); // subf r6, r6, r7
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 12, (UInt32)0x7CC60034).Apply(); // cntlzw r6, r6
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 16, (UInt32)0x54070FFE).Apply(); // rlwinm r7, r0, 0x1, 0x1f, 0x1f
-            }
             if (type == "Varia Only")
             {
                 new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off, (UInt32)0x7CC63850).Apply(); // subf r6, r6, r7
@@ -96,42 +91,15 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
                 new Patcher.DOL_Patch<Single>(MP1_Dol_Path, addr + off + 52, 0.5f).Apply();
                 new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 100, (UInt32)0xEFC0F7BC).Apply(); // fnmsubs f30, f0, f30, f30
             }
-            if (type == "Default")
-            {
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off, (UInt32)0x38800016).Apply(); // li r4, 0x16
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 4, (UInt32)0x4BF76D55).Apply(); // bl FUN_801a0b88
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 8, (UInt32)0x2C030000).Apply(); // cmpwi r3, 0x0 
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 12, (UInt32)0x4182000C).Apply(); // beq 80229e48
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 16, (UInt32)0x806D9BC0).Apply(); // lwz r3, -0x6440(r13)
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 20, (UInt32)0xC3C30300).Apply(); // lfs f30, 0x300(r3)
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 24, (UInt32)0x807808B4).Apply(); // lwz r3, 0x8b4(r24)
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 28, (UInt32)0x38800015).Apply(); // li r4, 0x15
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 32, (UInt32)0x4BF76D39).Apply(); // bl 801a0b88
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 36, (UInt32)0x2C030000).Apply(); // cmpwi r3, 0x0
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 40, (UInt32)0x41820014).Apply(); // beq 80229e6c
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 44, (UInt32)0x806D9BC0).Apply(); // lwz r3, -0x6440(r13)
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 48, (UInt32)0xC0230304).Apply(); // lfs f1, 0x304(r3)
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 52, (UInt32)0xEC1E0828).Apply(); // fsubs f0, f30, f1
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, addr + off + 100, (UInt32)0xEFBD0028).Apply(); // fsubs f29, f29, f0
-            }
         }
 
-        public static void ApplyScanDashPatch(bool enabled)
+        public static void ApplyScanDashPatch()
         {
-            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801932FC + 0x38, (UInt32)(enabled ? 0x48000018 : 0x41820010)).Apply();
-            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80194AF0 + 0x70, (UInt32)(enabled ? 0x4800001C : 0x4082001C)).Apply();
-
-            if (enabled)
-            {
-                // Stop dash when done with dash
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80192CC0, (UInt32)0x801F037C).Apply();
-            }
-            else
-            {
-                // Stop dash when no more locking on lock point
-                new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80192CC0, (UInt32)0x801F0300).Apply();
-            }
-            // 804D3FA8 804D3FB0
+            // Allow scan dash
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801932FC + 0x38, (UInt32)0x48000018).Apply();
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80194AF0 + 0x70, (UInt32)0x4800001C).Apply();
+            // Stop dash when done with dash
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80192CC0, (UInt32)0x801F037C).Apply();
         }
 
         public static void ApplyUnderwaterSlopeJumpFixPatch(bool enabled)
@@ -145,14 +113,63 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
             new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x801956B4, (UInt32)(enabled ? 0x48000014 : 0xEC42D828)).Apply();
         }
         
-        public static void ApplySpringBallPatch(bool enabled)
+        public static void ApplyDisableSpringBallPatch()
         {
-            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80147688, (UInt32)(enabled ? 0x60000000 : 0x40820008)).Apply();
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80147688, (UInt32)0x60000000).Apply();
         }
         
-        public static void ApplyLJumpFixPatch(bool enabled)
+        public static void ApplyInputPatch()
         {
-            // Jump to our subroutine then call CPlayer::UpdateOrbitInput do our stuff and return to CPlayer::ProcessInput
+            // DPAD Up => 0x1074 | Hypermode
+            // DPAD Down => 0x1077 | Shoot missiles
+            // DPAD Right => 0x107A | R Button
+            // DPAD Left => 0x107D | L Button
+            // unused register r16, r18, r19
+            // r1 => sp
+            // Hook(src, dst) where src is setting "this" to CPlayer::??? and dst is our custom function
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80182EBC, (UInt32)0x4BE7E944).Apply();
+
+            UInt32 custom_func_address = 0x80001800;
+            UInt32[] custom_func = new UInt32[] {
+                0x8A1D107A, // lbz r16, 0x107A(r29)
+                0x2C100001, // cmpwi r16, 1
+                0x4082000C, // bne 0x80001814
+                0x3A400006, // li r18, 6
+                0x925D0300, // stw r18, 0x300(r29)
+                0x3E40FFFF, // lis r18, 0xFFFF
+                0x3A527FFF, // addi r18, r18, 0x7FFF
+                0x3A527FFF, // addi r18, r18, 0x7FFF
+                0x3A520001, // addi r18, r18, 0x1
+                0x8A1D107D, // lbz r16, 0x107D(r29)
+                0x2C100001, // cmpwi r16, 1
+                0x4082003C, // bne 0x80001868
+                0x925D0310, // stw r18, 0x310(r29)
+                0x925D0314, // stw r18, 0x314(r29)
+                0x925D0318, // stw r18, 0x318(r29)
+                0x3A400002, // li r18, 2
+                0x925D0300, // stw r18, 0x300(r29)
+                0x48000024, // b 0x80001868
+                0x827D0310, // lwz r19, 0x310(r29)
+                0x7C120000, // cmpw r18, r19
+                0x40820018, // bne 0x80001868
+                0x3A600000, // li r19, 0
+                0x927D0310, // stw r19, 0x310(r29)
+                0x927D0314, // stw r19, 0x314(r29)
+                0x927D0318, // stw r19, 0x318(r29)
+                0x927D0310, // stw r19, 0x300(r29)
+                0x7E308838, // and r16, r17, r17
+                0x7E328838, // and r18, r17, r17
+                0x7E338838, // and r19, r17, r17
+                0x7FA3EB78, // mr r3, r29
+                0 // b 80001804 -> 80182EC0
+            };
+
+            // set jump back to CPlayer::ProcessInput
+            custom_func[custom_func.Length - 1] = MakeJMP((UInt32)(custom_func_address + (custom_func.Length - 1) * 4), 0x80182EC0);
+
+            WriteFunction(custom_func_address, custom_func);
+
+            /*// Jump to our subroutine then call CPlayer::UpdateOrbitInput do our stuff and return to CPlayer::ProcessInput
             new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x80182EB8, (UInt32)(enabled ? 0x480127E4 : 0x4801881D)).Apply();
 
             // Check if Z Button or DPad Up were pressed
@@ -179,10 +196,10 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
             }
 
             // Patch return of CPlayer::UpdateOrbitInput because it doesn't call the function but rather jump to it
-            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x8019BDB4, (UInt32)(enabled ? 0x428098EC : 0x4E800020)).Apply();
+            new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, 0x8019BDB4, (UInt32)(enabled ? 0x428098EC : 0x4E800020)).Apply();*/
         }
 
-        public static void SetSaveFilename(String filename = "save.bin")
+        public static void SetSaveFilename(String filename)
         {
             if (!filename.EndsWith(".bin"))
                 return;

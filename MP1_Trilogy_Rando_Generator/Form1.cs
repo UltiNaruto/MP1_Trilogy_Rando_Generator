@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -26,17 +27,6 @@ namespace MP1_Trilogy_Rando_Generator
             {
                 String GameID = Encoding.ASCII.GetString(bR.ReadBytes(6));
                 if (GameID.Substring(0, 3) != "R3M")
-                    return false;
-                return GameID[3] == 'E';
-            }
-        }
-
-        bool IsMetroidPrimeNTSC(string fileName)
-        {
-            using (var bR = new BinaryReader(File.OpenRead(fileName)))
-            {
-                String GameID = Encoding.ASCII.GetString(bR.ReadBytes(6));
-                if (GameID.Substring(0, 3) != "GM8")
                     return false;
                 return GameID[3] == 'E';
             }
@@ -86,7 +76,10 @@ namespace MP1_Trilogy_Rando_Generator
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if(File.Exists("udc.bin"))
+            if (!Directory.Exists(@".\tmp"))
+                Directory.CreateDirectory(@".\tmp");
+
+            if (File.Exists("udc.bin"))
                 UsedDeveloperCodes.AddRange(File.ReadAllLines("udc.bin"));
             if (IsTemplateISOGenerated())
             {
@@ -98,6 +91,32 @@ namespace MP1_Trilogy_Rando_Generator
                 this.label2.Text = "BashPrime's Randomizer found!";
             this.textBox1.Text = appSettings.outputPath;
             this.comboBox1.SelectedIndex = this.comboBox1.Items.IndexOf(appSettings.outputType);
+
+            if (!NodManager.Installed())
+            {
+                SetProgressStatus(1, 2);
+                SetStatus("Downloading and installing nod...");
+                if (!NodManager.Init())
+                {
+                    MessageBox.Show("Couldn't download nod");
+                    this.Close();
+                }
+                SetProgressStatus(2, 2);
+                SetStatus("Idle");
+            }
+
+            if (!WITManager.Installed())
+            {
+                SetProgressStatus(1, 2);
+                SetStatus("Downloading and installing WIT...");
+                if (!WITManager.Init())
+                {
+                    MessageBox.Show("Couldn't download WIT");
+                    this.Close();
+                }
+                SetProgressStatus(2, 2);
+                SetStatus("Idle");
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -106,15 +125,12 @@ namespace MP1_Trilogy_Rando_Generator
 
             MessageBox.Show(@"/!\ This operation can take 10 mins or more on a 5400 RPM HDD. So please be patient!");
 
-            if (Directory.Exists("tmp"))
-                Directory.Delete("tmp", true);
-
             using (var openFileDialog = new OpenFileDialog())
             {
                 var dialogResult = default(DialogResult);
 
                 openFileDialog.Title = "Select a NTSC-U iso of Metroid Prime Trilogy";
-                openFileDialog.Filter = "Wii ISO File|*.iso";
+                openFileDialog.Filter = "Wii ISO File|*.iso|Wii NKit ISO File|*.nkit.iso;*.nkit.iso";
                 openFileDialog.FileName = "";
                 openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
                 while (!openFileDialog.FileName.ToLower().EndsWith(".iso"))
@@ -143,7 +159,44 @@ namespace MP1_Trilogy_Rando_Generator
 
             SetProgressStatus(0, 5);
             SetStatus("Extracting Metroid Prime Trilogy ISO...");
-            if (!NodManager.ExtractISO(wii_iso_path, false))
+            if (wii_iso_path.ToLower().EndsWith(".nkit.iso") || wii_iso_path.ToLower().EndsWith(".nkit.gcz"))
+            {
+                if (!NKitManager.ExtractISO(wii_iso_path))
+                {
+                    MessageBox.Show("Failed extracting wii nkit iso!");
+                    SetProgressStatus(5, 5);
+                    SetStatus("Idle");
+                    return;
+                }
+
+                try {
+                    File.WriteAllBytes(@".\tmp\nkit\nkit_files.zip", Properties.Resources.R3ME01_nkit);
+                    ZipFile.ExtractToDirectory(@".\tmp\nkit\nkit_files.zip", @".\tmp\nkit\DATA");
+                    File.Move(@".\tmp\nkit\DATA\files\main.dol", @".\tmp\nkit\DATA\sys\main.dol");
+                    File.Delete(@".\tmp\nkit\nkit_files.zip");
+                    File.Delete(@".\tmp\nkit\DATA\files\boot.bin");
+                    File.Delete(@".\tmp\nkit\DATA\files\appldr.bin");
+                    File.Delete(@".\tmp\nkit\DATA\files\bi2.bin");
+                    File.Delete(@".\tmp\nkit\DATA\files\fst.bin");
+                    File.Delete(@".\tmp\nkit\DATA\sys\R3MEhdr.bin");
+                    File.Delete(@".\tmp\nkit\DATA\sys\hdr.bin");
+                    Directory.Move(@".\tmp\nkit", @".\tmp\wii");
+                } catch {
+                    Directory.Delete(@".\tmp\nkit", true);
+                }
+            }
+            else if (wii_iso_path.ToLower().EndsWith(".iso"))
+            {
+                if (!NodManager.ExtractISO(wii_iso_path, false))
+                {
+                    MessageBox.Show("Failed extracting wii iso!");
+                    SetProgressStatus(5, 5);
+                    SetStatus("Idle");
+                    return;
+                }
+            }
+
+            if (!Directory.Exists(@".\tmp\wii"))
             {
                 MessageBox.Show("Failed extracting wii iso!");
                 SetProgressStatus(5, 5);
@@ -163,7 +216,6 @@ namespace MP1_Trilogy_Rando_Generator
             SetProgressStatus(2, 5);
             SetStatus("Stripping MP2 and MP3 from Metroid Prime Trilogy...");
             
-            //FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\fe", true);
             FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\MP2", true);
             FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\MP3", true);
             FileUtils.NullifyFiles(".\\tmp\\wii\\DATA\\files\\", "*.dol", "rs5mp1_p.dol", "rs5fe_p.dol");
@@ -218,7 +270,7 @@ namespace MP1_Trilogy_Rando_Generator
         {
             File.Delete("gc_template.iso");
             Directory.Delete("tmp", true);
-            this.label1.Text = "No Trilogy ISO template for BashPrime's Randomizer detected!(Only NTSC - U supported for now)";
+            this.label1.Text = "No Trilogy ISO template for BashPrime's Randomizer detected! (Only NTSC - U supported for now)";
             this.button1.Enabled = true;
             this.button2.Enabled = false;
         }
@@ -251,7 +303,7 @@ namespace MP1_Trilogy_Rando_Generator
                     if (dialogResult == DialogResult.Cancel)
                     {
                         if (!appSettings.prime1RandomizerPath.EndsWith(".exe"))
-                            this.label2.Text = "BashPrime's Randomizer not found! (v2.2.2 required at least)";
+                            this.label2.Text = "BashPrime's Randomizer not found! (v2.5.0 or later)";
                         return;
                     }
                 }
@@ -371,14 +423,16 @@ namespace MP1_Trilogy_Rando_Generator
 
                 DevCode = RandomizeDeveloperCode();
 
+                //new DOL_AddSection_Patch(Patches.MP1_Dol_Path, DOL_AddSection_Patch.SectionType.TEXT, 0x80001800, 0x800).Apply();
+
                 //Patches.DisableHintSystem(true);
-                Patches.ApplySkipCutscenePatch(true);
+                Patches.ApplySkipCutscenePatch();
                 Patches.ApplyHeatProtectionPatch(randomizerSettings.heatProtection);
                 Patches.ApplySuitDamageReductionPatch(randomizerSettings.suitDamageReduction);
-                Patches.ApplyScanDashPatch(true);
+                Patches.ApplyScanDashPatch();
                 Patches.ApplyUnderwaterSlopeJumpFixPatch(true);
                 Patches.SetSaveFilename(DevCode + ".bin");
-                //Patches.ApplyLJumpFixPatch(true);
+                //Patches.ApplyInputPatch();
 
                 /*  */
 
@@ -388,7 +442,7 @@ namespace MP1_Trilogy_Rando_Generator
                 if (((String)comboBox1.SelectedItem).ToLower().EndsWith(".ciso"))
                 {
                     WITManager.CreateCompressISO(".\\tmp\\mpt.ciso", false, "R3ME" + DevCode);
-                    if (File.Exists(GameSettingsDolphinEmuPath + "R3ME01.ini"))
+                    if (File.Exists(GameSettingsDolphinEmuPath + "R3ME01.ini") && !File.Exists(GameSettingsDolphinEmuPath + "R3ME" + DevCode + ".ini"))
                         File.Copy(GameSettingsDolphinEmuPath + "R3ME01.ini", GameSettingsDolphinEmuPath + "R3ME" + DevCode + ".ini");
                 }
                 else if (((String)comboBox1.SelectedItem).ToLower().EndsWith(".wbfs"))

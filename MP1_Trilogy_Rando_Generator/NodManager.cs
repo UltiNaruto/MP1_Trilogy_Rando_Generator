@@ -1,18 +1,43 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Net;
 using System.Text;
-using System.Threading;
 
 namespace MP1_Trilogy_Rando_Generator
 {
     class NodManager
     {
-        [DllImport("user32.dll")]
-        static extern bool SetWindowText(IntPtr hWnd, string text);
 
         private const string NOD_PATH = @"nod\nod.exe";
+        private const string NOD_EXE_URL = "https://github.com/AxioDL/nod/releases/download/v1.0/nodtool.v1.win64.exe";
+        private const string NOD_LICENSE_URL = "https://raw.githubusercontent.com/AxioDL/nod/master/LICENSE";
+
+        public static bool Installed()
+        {
+            return File.Exists(NOD_PATH);
+        }
+
+        public static bool Init()
+        {
+            try
+            {
+                if (Installed())
+                    return true;
+                using (var client = new WebClientPlus())
+                {
+                    if (!Directory.Exists(@".\nod"))
+                        Directory.CreateDirectory(@".\nod");
+                    client.DownloadFile(NOD_EXE_URL, NOD_PATH);
+                    client.DownloadFile(NOD_LICENSE_URL, @".\nod\LICENSE");
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         public static bool ExtractISO(string filename, bool isGC_ISO)
         {
@@ -25,8 +50,6 @@ namespace MP1_Trilogy_Rando_Generator
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
                 Process proc = Process.Start(info);
-                Thread.Sleep(1000);
-                SetWindowText(proc.MainWindowHandle, "Extracting "+(isGC_ISO ? "GC" : "Wii")+" ISO...");
                 proc.WaitForExit();
                 return proc.ExitCode == 0;
             }
@@ -78,8 +101,6 @@ namespace MP1_Trilogy_Rando_Generator
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
                 Process proc = Process.Start(info);
-                Thread.Sleep(1000);
-                SetWindowText(proc.MainWindowHandle, "Creating " + (isGC_ISO ? "GC" : "Wii") + " ISO...");
                 proc.WaitForExit();
                 return proc.ExitCode == 0;
             }

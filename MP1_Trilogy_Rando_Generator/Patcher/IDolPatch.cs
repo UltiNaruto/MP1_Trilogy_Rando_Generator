@@ -7,15 +7,15 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
 {
     class IDolPatch : IPatch
     {
-        struct MemSection
+        protected struct MemSection
         {
             public UInt32 FileAddress;
             public UInt32 MemoryAddress;
             public UInt32 Size;
         }
 
-        List<MemSection> textSections = new List<MemSection>();
-        List<MemSection> dataSections = new List<MemSection>();
+        protected List<MemSection> textSections = new List<MemSection>();
+        protected List<MemSection> dataSections = new List<MemSection>();
 
         public IDolPatch(String path)
         {

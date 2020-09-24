@@ -223,7 +223,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(766, 29);
             this.label2.TabIndex = 1;
-            this.label2.Text = "BashPrime\'s Randomizer not found! (v2.2.2 required at least)";
+            this.label2.Text = "BashPrime\'s Randomizer not found! (v2.5.0 or later required)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tableLayoutPanel5
@@ -364,7 +364,7 @@
             this.MinimumSize = new System.Drawing.Size(800, 355);
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.6";
+            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.7";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.helpBtn_Click);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);

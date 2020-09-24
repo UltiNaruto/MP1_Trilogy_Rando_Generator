@@ -69,5 +69,15 @@ namespace MP1_Trilogy_Rando_Generator.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Byte[].
+        /// </summary>
+        internal static byte[] R3ME01_nkit {
+            get {
+                object obj = ResourceManager.GetObject("R3ME01_nkit", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

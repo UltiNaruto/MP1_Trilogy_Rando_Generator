@@ -1,29 +1,51 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading;
+using System.IO.Compression;
+using System.Net;
 
 namespace MP1_Trilogy_Rando_Generator
 {
     class WITManager
     {
-        [DllImport("user32.dll")]
-        static extern bool SetWindowText(IntPtr hWnd, string text);
-
         private const string WIT_PATH = @".\wit\bin\wit.exe";
+        private const string WIT_URL = "https://wit.wiimm.de/download/wit-v3.03a-r8245-cygwin.zip";
+
+        public static bool Installed()
+        {
+            return File.Exists(WIT_PATH);
+        }
+
+        public static bool Init()
+        {
+            try
+            {
+                if (Installed())
+                    return true;
+                using (var client = new WebClientPlus())
+                {
+                    client.DownloadFile(WIT_URL, @".\tmp\wit.zip");
+                    ZipFile.ExtractToDirectory(@".\tmp\wit.zip", @".");
+                    Directory.Move(@".\wit-v3.03a-r8245-cygwin", @".\wit");
+                    File.Delete(@".\tmp\wit.zip");
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         public static bool CreateCompressISO(string filename, bool isGC_ISO, String GameCode)
         {
             try
             {
-                ProcessStartInfo info = new ProcessStartInfo(WIT_PATH, "COPY -d \""+filename+"\" -s .\\tmp\\wii -C  --id " + GameCode);
+                ProcessStartInfo info = new ProcessStartInfo(WIT_PATH, "COPY -d \""+filename+ "\" -s .\\tmp\\wii -C  --id " + GameCode);
                 info.WorkingDirectory = Directory.GetCurrentDirectory();
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
                 Process proc = Process.Start(info);
-                Thread.Sleep(1000);
-                SetWindowText(proc.MainWindowHandle, "Creating Compressed "+(isGC_ISO ? "GC" : "Wii")+" ISO...");
                 proc.WaitForExit();
                 return proc.ExitCode == 0;
             }
@@ -42,8 +64,6 @@ namespace MP1_Trilogy_Rando_Generator
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
                 Process proc = Process.Start(info);
-                Thread.Sleep(1000);
-                SetWindowText(proc.MainWindowHandle, "Creating WBFS...");
                 proc.WaitForExit();
                 return proc.ExitCode == 0;
             }
