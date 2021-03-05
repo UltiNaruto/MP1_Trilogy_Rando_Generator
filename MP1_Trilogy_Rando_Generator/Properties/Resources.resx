@@ -121,7 +121,13 @@
   <data name="dummy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\embed_res\dummy.thp;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="R3IJ01_nkit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\embed_res\R3IJ01_nkit.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="R3ME01_nkit" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\embed_res\R3ME01_nkit.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="R3MP01_nkit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\embed_res\R3MP01_nkit.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

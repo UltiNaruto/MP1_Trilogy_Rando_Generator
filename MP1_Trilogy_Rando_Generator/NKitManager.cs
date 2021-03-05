@@ -22,7 +22,9 @@ namespace MP1_Trilogy_Rando_Generator
                 {
                     if (ndisc == null)
                         throw new System.Exception();
-                    if (ndisc.ExtractBasicInfo().Id.Substring(0,6) != "R3ME01")
+                    if (ndisc.ExtractBasicInfo().Id.Substring(0, 6) != "R3ME01" &&
+                        ndisc.ExtractBasicInfo().Id.Substring(0, 6) != "R3MP01" &&
+                        ndisc.ExtractBasicInfo().Id.Substring(0, 6) != "R3IJ01")
                         throw new System.Exception();
                     ndisc.ExtractFiles(ext_f => true,
                     (f, ext_f) =>

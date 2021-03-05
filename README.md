@@ -1,5 +1,6 @@
-# MP1_Trilogy_Rando_Generator
-Generate a randomized ISO using BashPrime's Randomizer (https://github.com/etaylor8086/metroid-prime-randomizer/releases/latest) from a Metroid Prime Trilogy NTSC-U ISO
+# MP1 Trilogy Rando Generator
+Generate a randomized ISO using BashPrime's Randomizer (https://github.com/etaylor8086/metroid-prime-randomizer/releases/latest) from a Metroid Prime Trilogy NTSC-U ISO.<br/>
+When 2.6.0 of BashPrime's randomizer will be released you will be able to use PAL or NTSC-J version.
 
 # Usage
 First generate a template ISO using Metroid Prime Trilogy NTSC-U ISO.<br/>
@@ -30,7 +31,7 @@ Q: I got softlocked. What do I do?<br/>
 A: BashPrime's Randomizer contains a FAQ about softlocks. Make sure to check it before starting to play.
 
 Q: Will you support Metroid Prime Trilogy PAL/NTSC-J?<br/>
-A: I do intend to add the support for them. But it will take time before I do so. For the time being you will need the NTSC-U version.
+A: The support was added but BashPrime's randomizer currently doesn't support it yet.
 
 Q: Will you support Metroid Prime 2 - Echoes?<br/>
 A: I don't intend on doing so. If you want to play it on Trilogy, wait for Randovania to support it natively.
