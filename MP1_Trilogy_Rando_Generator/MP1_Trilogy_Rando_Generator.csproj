@@ -47,6 +47,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -75,9 +76,12 @@
       <DependentUpon>HelpForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NKitManager.cs" />
-    <Compile Include="Patcher\DOL_AddSection_Patch.cs" />
-    <Compile Include="Patcher\DOL_ScrollCode_Patch.cs" />
-    <Compile Include="Patcher\IDolPatch.cs" />
+    <Compile Include="Patcher\DolPatch.cs" />
+    <Compile Include="Patcher\Patches\NTSC_J.cs" />
+    <Compile Include="Patcher\Patches\PAL.cs" />
+    <Compile Include="Patcher\Patches\NTSC_U.cs" />
+    <Compile Include="Patcher\Patches\_Trilogy.cs" />
+    <Compile Include="Utils\ProcessUtils.cs" />
     <Compile Include="Utils\DirectoryUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="WebClientPlus.cs">
@@ -86,9 +90,7 @@
     <Compile Include="Wiki\WikiHelper.cs" />
     <Compile Include="WITManager.cs" />
     <Compile Include="NodManager.cs" />
-    <Compile Include="Patcher\DOL_Patch.cs" />
-    <Compile Include="Patcher\IPatch.cs" />
-    <Compile Include="Patcher\Patches.cs" />
+    <Compile Include="Patcher\Patcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomizerManager.cs" />
@@ -109,7 +111,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="embed_res\dummy.thp" />
+    <None Include="embed_res\R3IJ01_nkit.zip" />
     <None Include="embed_res\R3ME01_nkit.zip" />
+    <None Include="embed_res\R3MP01_nkit.zip" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -124,7 +128,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

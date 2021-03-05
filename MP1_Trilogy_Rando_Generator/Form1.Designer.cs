@@ -114,8 +114,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(766, 33);
             this.label1.TabIndex = 0;
-            this.label1.Text = "No Trilogy ISO template for Prime 1 Randomizer detected! (Only NTSC-U supported f" +
-    "or now)";
+            this.label1.Text = "No Metroid Prime Wii ISO template for Prime 1 Randomizer detected!";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tableLayoutPanel7
@@ -154,7 +153,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(380, 36);
             this.button1.TabIndex = 2;
-            this.button1.Text = "Generate a template ISO for Prime 1 Randomizer";
+            this.button1.Text = "Generate a template ISO for BashPrime\'s Randomizer";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -223,7 +222,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(766, 29);
             this.label2.TabIndex = 1;
-            this.label2.Text = "BashPrime\'s Randomizer not found! (v2.5.0 or later required)";
+            this.label2.Text = "BashPrime\'s Randomizer not found! (v2.6.0 or later required)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tableLayoutPanel5
@@ -317,8 +316,8 @@
             // tableLayoutPanel4
             // 
             this.tableLayoutPanel4.ColumnCount = 2;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel4.Controls.Add(this.label3, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.progressBar1, 1, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -327,7 +326,6 @@
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel4.Size = new System.Drawing.Size(784, 26);
             this.tableLayoutPanel4.TabIndex = 5;
             // 
@@ -336,7 +334,7 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Location = new System.Drawing.Point(3, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(386, 26);
+            this.label3.Size = new System.Drawing.Size(464, 26);
             this.label3.TabIndex = 5;
             this.label3.Text = "Status : Idle";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -344,9 +342,9 @@
             // progressBar1
             // 
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.progressBar1.Location = new System.Drawing.Point(395, 3);
+            this.progressBar1.Location = new System.Drawing.Point(473, 3);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(386, 20);
+            this.progressBar1.Size = new System.Drawing.Size(308, 20);
             this.progressBar1.TabIndex = 6;
             this.progressBar1.Visible = false;
             // 
@@ -364,8 +362,9 @@
             this.MinimumSize = new System.Drawing.Size(800, 355);
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.7";
+            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.8";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.helpBtn_Click);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.formClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
