@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DarkUI, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DarkUI.2.0.2\lib\DarkUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NKit">
       <HintPath>refs\NKit.dll</HintPath>
     </Reference>
@@ -69,31 +75,33 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Control\TabControlNoHeader.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\Control\WebClientPlus.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="HelpForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="HelpForm.Designer.cs">
       <DependentUpon>HelpForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="NKitManager.cs" />
     <Compile Include="Patcher\DolPatch.cs" />
     <Compile Include="Patcher\Patches\NTSC_J.cs" />
     <Compile Include="Patcher\Patches\PAL.cs" />
     <Compile Include="Patcher\Patches\NTSC_U.cs" />
     <Compile Include="Patcher\Patches\_Trilogy.cs" />
+    <Compile Include="Utils\DiscUtils.cs" />
+    <Compile Include="Utils\FormUtils.cs" />
+    <Compile Include="Utils\ISOUtils.cs" />
     <Compile Include="Utils\ProcessUtils.cs" />
     <Compile Include="Utils\DirectoryUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
-    <Compile Include="WebClientPlus.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Wiki\WikiHelper.cs" />
-    <Compile Include="WITManager.cs" />
-    <Compile Include="NodManager.cs" />
     <Compile Include="Patcher\Patcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RandomizerManager.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -128,9 +136,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

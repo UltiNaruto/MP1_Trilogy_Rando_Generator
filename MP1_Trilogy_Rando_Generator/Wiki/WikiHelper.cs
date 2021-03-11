@@ -102,6 +102,7 @@ namespace MP1_Trilogy_Rando_Generator
                     HTML = RemoveTag(HTML, "<a href=\"/UltiNaruto/MP1_Trilogy_Rando_Generator/wiki/" + FileName + "/_history\" class=\"muted-link\">");
                     HTML = RemoveTag(HTML, "<div class=\"mt-0 mt-lg-1 flex-shrink-0 gh-header-actions\">");
                     HTML = RemoveTag(HTML, "<template class=\"js-flash-template\">");
+                    HTML = RemoveTag(HTML, "<nav aria-label=\"Repository\" data-pjax=\"#js-repo-pjax-container\" class=\"js-repo-nav js-sidenav-container-pjax js-responsive-underlinenav overflow-hidden UnderlineNav px-3 px-md-4 px-lg-5 bg-gray-light\">");
                     foreach (var _URL in URLs)
                     {
                         _FileName = _URL.Substring(_URL.LastIndexOf("/") + 1);
@@ -109,6 +110,7 @@ namespace MP1_Trilogy_Rando_Generator
                             _FileName = "Home";
                         HTML = HTML.Replace(_URL.Substring(18), _FileName == "Home" ? "./index.html" : "./" + _FileName + ".html");
                     }
+                    HTML = HTML.Replace("<body class=\"logged-out env-production page-responsive\" style=\"word-wrap: break-word;\">", "<body bgcolor=\"#000\" style=\"color: #AAA\" class=\"logged-out env-production page-responsive\" style=\"word-wrap: break-word;\">");
                     File.WriteAllText(FileName == "Home" ? ".\\wiki\\index.html" : ".\\wiki\\" + FileName + ".html", HTML);
                 }
             }

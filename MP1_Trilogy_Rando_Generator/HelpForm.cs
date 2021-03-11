@@ -1,11 +1,12 @@
-﻿using System;
+﻿using DarkUI.Forms;
+using System;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
 
 namespace MP1_Trilogy_Rando_Generator
 {
-    public partial class HelpForm : Form
+    public partial class HelpForm : DarkForm
     {
         bool IsConnectedToInternet()
         {
@@ -36,6 +37,11 @@ namespace MP1_Trilogy_Rando_Generator
 
         private void NewURL(object sender, WebBrowserNavigatedEventArgs e)
         {
+        }
+
+        private void close_btn_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

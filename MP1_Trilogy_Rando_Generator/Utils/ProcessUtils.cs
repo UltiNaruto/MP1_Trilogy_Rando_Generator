@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Management;
 
 namespace MP1_Trilogy_Rando_Generator.Utils
@@ -24,6 +26,23 @@ namespace MP1_Trilogy_Rando_Generator.Utils
                         Process.GetProcessById(childProcessId).Kill();
                     }
                 }
+            }
+        }
+
+        public static bool Run(String path, params String[] args)
+        {
+            try
+            {
+                ProcessStartInfo info = new ProcessStartInfo(path);
+                info.WorkingDirectory = Directory.GetCurrentDirectory();
+                info.Arguments = String.Join(" ", args);
+                Process proc = Process.Start(info);
+                proc.WaitForExit();
+                return proc.ExitCode == 0;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

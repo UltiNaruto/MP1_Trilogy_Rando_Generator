@@ -37,8 +37,7 @@ namespace MP1_Trilogy_Rando_Generator.Config
                             if (kvp[0].Trim() == "staggered suit damage")
                                 this.suitDamageReduction = kvp[1].Trim() == "true" ? "Progressive" : "Default";
                             if (kvp[0].Trim() == "starting area")
-                                if (this.spawnRoom == null)
-                                    this.spawnRoom = SpawnRoom.Values[kvp[1].Trim()];
+                                this.spawnRoom = SpawnRoom.randomizerValues[kvp[1].Trim()];
                         }
                     }
                 }
@@ -46,7 +45,7 @@ namespace MP1_Trilogy_Rando_Generator.Config
                 this.skipFrigate = false;
                 this.heatProtection = "Any Suit";
                 this.suitDamageReduction = "Default";
-                this.spawnRoom = SpawnRoom.Values["Landing Site"];
+                this.spawnRoom = SpawnRoom.randomizerValues["Landing Site"];
             }
         }
     }
