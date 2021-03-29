@@ -1,0 +1,3 @@
+[submodule "ppcasm_cs"]
+	path = ppcasm_cs
+	url = https://github.com/UltiNaruto/ppcasm_cs
