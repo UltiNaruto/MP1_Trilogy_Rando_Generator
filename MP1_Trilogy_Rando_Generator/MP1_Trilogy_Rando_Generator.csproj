@@ -8,10 +8,11 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>MP1_Trilogy_Rando_Generator</RootNamespace>
     <AssemblyName>MP1_Trilogy_Rando_Generator</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,11 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkUI, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DarkUI.2.0.2\lib\DarkUI.dll</HintPath>
+    <Reference Include="DarkUI, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DarkUI.2.0.1\lib\DarkUI.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NKit">
       <HintPath>refs\NKit.dll</HintPath>
@@ -54,6 +55,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,11 +63,11 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\AppSettings.cs" />
+    <Compile Include="Config\PrimeSettings.cs" />
     <Compile Include="Config\RandomizerSettings.cs" />
     <Compile Include="Config\PatchSettings.cs" />
     <Compile Include="Enums\SpawnRoom.cs" />
@@ -74,6 +76,9 @@
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Control\DarkComboBox_.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Forms\Control\TabControlNoHeader.cs">
       <SubType>Component</SubType>
@@ -87,17 +92,26 @@
     <Compile Include="HelpForm.Designer.cs">
       <DependentUpon>HelpForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Patcher\AddressDB\FrontEnd\A_FE_PAL.cs" />
+    <Compile Include="Patcher\AddressDB\FrontEnd\A_FE_NTSC_U.cs" />
+    <Compile Include="Patcher\AddressDB\FrontEnd\A_FE_NTSC_J_MP1.cs" />
+    <Compile Include="Patcher\AddressDB\TrilogyPrime.cs" />
     <Compile Include="Patcher\DolPatch.cs" />
-    <Compile Include="Patcher\Patches\NTSC_J.cs" />
-    <Compile Include="Patcher\Patches\PAL.cs" />
-    <Compile Include="Patcher\Patches\NTSC_U.cs" />
-    <Compile Include="Patcher\Patches\_Trilogy.cs" />
+    <Compile Include="Patcher\AddressDB\Prime\A_NTSC_J.cs" />
+    <Compile Include="Patcher\AddressDB\Prime\A_PAL.cs" />
+    <Compile Include="Patcher\AddressDB\Prime\A_NTSC_U.cs" />
+    <Compile Include="Patcher\Addresses.cs" />
+    <Compile Include="Patcher\Patches\Prime\NTSC_J.cs" />
+    <Compile Include="Patcher\Patches\Prime\PAL.cs" />
+    <Compile Include="Patcher\Patches\TrilogyPrime.cs" />
+    <Compile Include="Patcher\Patches\Prime\NTSC_U.cs" />
     <Compile Include="Utils\DiscUtils.cs" />
     <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Utils\ISOUtils.cs" />
     <Compile Include="Utils\ProcessUtils.cs" />
     <Compile Include="Utils\DirectoryUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Wiki\WikiHelper.cs" />
     <Compile Include="Patcher\Patcher.cs" />
     <Compile Include="Program.cs" />
@@ -136,7 +150,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ppcasm_cs\ppcasm_cs\ppcasm_cs.csproj">
+      <Project>{d7b05604-9633-4e57-9fd3-1e6f5956b0f6}</Project>
+      <Name>ppcasm_cs</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

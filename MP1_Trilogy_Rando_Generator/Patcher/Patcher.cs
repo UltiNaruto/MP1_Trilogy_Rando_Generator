@@ -1,16 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MP1_Trilogy_Rando_Generator.Patcher
 {
     // Add suit damage reduction patch
     class Patcher
     {
-        static Patches._Trilogy patches = null;
-
-        static UInt32 MakeJMP(UInt32 src, UInt32 dst)
-        {
-            return (UInt32)(0x48000000 + (dst - src));
-        }
+        static Patches.TrilogyPrime prime = null;
 
         /*static void WriteFunction(UInt32 address, UInt32[] opcodes)
         {
@@ -22,90 +18,27 @@ namespace MP1_Trilogy_Rando_Generator.Patcher
                 new Patcher.DOL_Patch<UInt32>(MP1_Dol_Path, (UInt32)(address + i * 4), opcodes[i]).Apply();
         }*/
 
-        public static void Init(char Game_Region)
+        public static void Init(String game_id, int mprime)
         {
-            if (Game_Region == 'P')
-                patches = new Patches.PAL();
-            if (Game_Region == 'E')
-                patches = new Patches.NTSC_U();
-            if (Game_Region == 'J')
-                patches = new Patches.NTSC_J();
+            if (mprime == 1)
+            {
+                if (game_id == "R3MP")
+                    prime = new Patches.Prime.PAL();
+                if (game_id == "R3ME")
+                    prime = new Patches.Prime.NTSC_U();
+                if (game_id == "R3IJ")
+                    prime = new Patches.Prime.NTSC_J();
+            }
+            else
+            {
+                prime = null;
+            }
         }
 
-        public static void SetStartingArea(Enums.SpawnRoom spawnRoom)
+        internal static void Apply(Dictionary<String, Object> config)
         {
-            UInt16 MLVL_H = (UInt16)((spawnRoom.MLVL & 0xFFFF0000) >> 16);
-            UInt16 MLVL_L = (UInt16)(spawnRoom.MLVL & 0xFFFF);
-            if (MLVL_L > 0x7FFF)
-                MLVL_H++;
-
-            if (patches == null)
-                return;
-
-            patches.SetStartingArea(MLVL_H, MLVL_L, (UInt16)spawnRoom.MREA_ID);
-        }
-
-        public static void ApplySkipCutscenePatch()
-        {
-            if (patches == null)
-                return;
-
-            patches.ApplySkipCutscenePatch();
-        }
-
-        public static void ApplyHeatProtectionPatch(String type)
-        {
-            if (patches == null)
-                return;
-
-            patches.ApplyHeatProtectionPatch(type);
-        }
-
-        public static void ApplySuitDamageReductionPatch(String type)
-        {
-            if (patches == null)
-                return;
-
-            patches.ApplySuitDamageReductionPatch(type);
-        }
-
-        public static void ApplyScanDashPatch()
-        {
-            if (patches == null)
-                return;
-
-            patches.ApplyScanDashPatch();
-        }
-
-        public static void ApplyUnderwaterSlopeJumpFixPatch(bool enabled)
-        {
-            if (patches == null)
-                return;
-
-            patches.ApplyUnderwaterSlopeJumpFixPatch(enabled);
-        }
-        
-        public static void ApplyDisableSpringBallPatch()
-        {
-            if (patches == null)
-                return;
-
-            patches.ApplyDisableSpringBallPatch();
-        }
-
-        public static void SetSaveFilename(String filename)
-        {
-            if (patches == null)
-                return;
-
-            if (!filename.EndsWith(".bin"))
-                return;
-            if (filename.Length > 8)
-                return;
-            while (filename.Length < 8)
-                filename += "\0";
-
-            patches.SetSaveFilename(filename);
+            if (prime != null)
+                prime.Apply(config);
         }
     }
 }

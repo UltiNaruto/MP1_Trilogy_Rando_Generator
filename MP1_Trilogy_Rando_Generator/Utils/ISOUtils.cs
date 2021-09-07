@@ -169,7 +169,7 @@ namespace MP1_Trilogy_Rando_Generator.Utils
         internal class WIT
         {
             private const string WIT_PATH = @".\wit\bin\wit.exe";
-            private const string WIT_URL = "https://wit.wiimm.de/download/wit-v3.03a-r8245-cygwin.zip";
+            private const string WIT_URL = "https://wit.wiimm.de/download/wit-v3.04a-r8427-cygwin32.zip";
 
             public static bool Installed()
             {
@@ -186,7 +186,7 @@ namespace MP1_Trilogy_Rando_Generator.Utils
                     {
                         client.DownloadFile(WIT_URL, @".\tmp\wit.zip");
                         ZipFile.ExtractToDirectory(@".\tmp\wit.zip", @".");
-                        Directory.Move(@".\wit-v3.03a-r8245-cygwin", @".\wit");
+                        Directory.Move(@".\wit-v3.04a-r8427-cygwin32", @".\wit");
                         File.Delete(@".\tmp\wit.zip");
                         return true;
                     }

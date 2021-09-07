@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -13,34 +15,30 @@ namespace MP1_Trilogy_Rando_Generator.Config
 
         public PatchSettings()
         {
-            var line = default(String);
-            var kvp = default(MatchCollection);
-            try
-            {
-                String AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                using (var sR = new StreamReader(File.OpenRead(AppData + @"\metroid-prime-randomizer\patch-settings.json")))
-                {
-                    while (!sR.EndOfStream)
-                    {
-                        line = sR.ReadLine().Trim().Trim(' ');
-                        kvp = new Regex("\"(.*?)\"").Matches(line);
-                        if (kvp.Count == 2)
-                        {
-                            if (kvp[0].Groups[1].Value == "baseIso")
-                                this.baseIso = kvp[1].Groups[1].Value;
-                            if (kvp[0].Groups[1].Value == "outputFolder")
-                                this.outputFolder = kvp[1].Groups[1].Value;
-                            if (kvp[0].Groups[1].Value == "outputType")
-                                this.outputType = kvp[1].Groups[1].Value;
-                            if (kvp[0].Groups[1].Value == "trilogyIso")
-                                this.trilogyIso = kvp[1].Groups[1].Value;
-                        }
-                    }
-                }
+            String AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            dynamic json = JObject.Parse(File.ReadAllText(AppData + @"\metroid-prime-randomizer\patch-settings.json"));
+
+            try {
+                this.baseIso = json.baseIso;
             } catch {
                 this.baseIso = "";
+            }
+
+            try {
+                this.outputFolder = json.outputFolder;
+            } catch {
                 this.outputFolder = "";
+            }
+
+            try {
+                this.outputType = json.outputType;
+            } catch {
                 this.outputType = "iso";
+            }
+
+            try {
+                this.trilogyIso = json.trilogyIso;
+            } catch {
                 this.trilogyIso = "";
             }
         }
@@ -58,15 +56,7 @@ namespace MP1_Trilogy_Rando_Generator.Config
             String AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             if (File.Exists(AppData + @"\metroid-prime-randomizer\patch-settings.json"))
                 File.Delete(AppData + @"\metroid-prime-randomizer\patch-settings.json");
-            using (var sW = new StreamWriter(File.OpenWrite(AppData + @"\metroid-prime-randomizer\patch-settings.json")))
-            {
-                sW.WriteLine("{");
-                sW.WriteLine("\t\"baseIso\": \""+this.baseIso+"\",");
-                sW.WriteLine("\t\"outputFolder\": \"" + this.outputFolder + "\",");
-                sW.WriteLine("\t\"outputType\": \"" + this.outputType + "\",");
-                sW.WriteLine("\t\"trilogyIso\": \"" + this.trilogyIso + "\"");
-                sW.WriteLine("}");
-            }
+            File.WriteAllText(AppData + @"\metroid-prime-randomizer\patch-settings.json", JsonConvert.SerializeObject(this, Formatting.Indented));
         }
     }
 }

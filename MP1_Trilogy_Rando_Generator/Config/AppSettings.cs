@@ -1,54 +1,125 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace MP1_Trilogy_Rando_Generator.Config
 {
     class AppSettings
     {
         public String prime1RandomizerPath;
-        public String prime1PlandomizerPath;
-        public String prime1PlandomizerLastJsonPath;
+        public bool disableSpringBall;
+        public bool enableMapFromStart;
         public String outputPath;
         public String outputType;
+        public PrimeSettings primeSettings;
 
-        public AppSettings()
+        static AppSettings LoadDefaultSettings()
         {
-            var line = default(String);
-            var kvp = default(MatchCollection);
-            try
-            {
-                String CurDir = Directory.GetCurrentDirectory();
-                using (var sR = new StreamReader(File.OpenRead(CurDir + @"\settings.json")))
-                {
-                    while (!sR.EndOfStream)
-                    {
-                        line = sR.ReadLine().Trim().Trim(' ');
-                        kvp = new Regex("\"(.*?)\"").Matches(line);
-                        if (kvp.Count == 2)
-                        {
-                            if (kvp[0].Groups[1].Value == "prime1RandomizerPath")
-                                this.prime1RandomizerPath = kvp[1].Groups[1].Value;
-                            if (kvp[0].Groups[1].Value == "prime1PlandomizerPath")
-                                this.prime1PlandomizerPath = kvp[1].Groups[1].Value;
-                            if (kvp[0].Groups[1].Value == "prime1PlandomizerLastJsonPath")
-                                this.prime1PlandomizerLastJsonPath = kvp[1].Groups[1].Value;
-                            if (kvp[0].Groups[1].Value == "outputPath")
-                                this.outputPath = kvp[1].Groups[1].Value;
-                            if (kvp[0].Groups[1].Value == "outputType")
-                                this.outputType = kvp[1].Groups[1].Value;
-                        }
-                    }
+            AppSettings appSettings = new AppSettings();
+            appSettings.prime1RandomizerPath = "";
+            appSettings.outputPath = "";
+            appSettings.outputType = ".ciso";
+            appSettings.primeSettings = new PrimeSettings();
+            appSettings.SaveToJson();
+            return appSettings;
+        }
+
+        public static AppSettings LoadFromJson()
+        {
+            AppSettings appSettings = null;
+            String CurDir = Directory.GetCurrentDirectory();
+            if (!File.Exists(CurDir+@"\settings.json"))
+                return LoadDefaultSettings();
+
+            appSettings = new AppSettings();
+
+            try {
+                dynamic json = JObject.Parse(File.ReadAllText(CurDir + @"\settings.json"));
+
+                try {
+                    appSettings.prime1RandomizerPath = json.prime1RandomizerPath;
+                } catch {
+                    appSettings.prime1RandomizerPath = "";
                 }
-            }
-            catch
-            {
-                this.prime1RandomizerPath = "";
-                this.prime1PlandomizerPath = "";
-                this.prime1PlandomizerLastJsonPath = "";
-                this.outputPath = "";
-                this.outputType = ".ciso";
-                this.SaveToJson();
+
+                try {
+                    appSettings.outputPath = json.outputPath;
+                } catch {
+                    appSettings.outputPath = "";
+                }
+
+                try {
+                    appSettings.outputType = json.outputType;
+                } catch {
+                    appSettings.outputType = ".ciso";
+                }
+
+                try {
+                    appSettings.disableSpringBall = json.disableSpringBall;
+                } catch {
+                    appSettings.disableSpringBall = false;
+                }
+
+                try {
+                    appSettings.enableMapFromStart = json.enableMapFromStart;
+                } catch {
+                    appSettings.enableMapFromStart = false;
+                }
+
+                appSettings.primeSettings = new PrimeSettings();
+
+                try {
+                    appSettings.primeSettings.SetSensitivity((Config.PrimeSettings.SensitivityEnum)Convert.ToUInt32(json.primeSettings.controller.Sensitivity));
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetLockOnFreeAim(json.primeSettings.controller.LockOnFreeAim == "true");
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetRumble(json.primeSettings.controller.Rumble == "true");
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetSwapJumpFire(json.primeSettings.controller.SwapJumpFire == "true");
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetSwapVisorAndBeam(json.primeSettings.controller.SwapVisorAndBeamHyper == "true");
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetBrightness(Convert.ToUInt32(json.primeSettings.display.Brightness));
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetBonusCreditMessages(json.primeSettings.display.BonusCreditMessages == "true");
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetVisorOpacity(Convert.ToUInt32(json.primeSettings.visor.VisorOpacity));
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetHelmetOpacity(Convert.ToUInt32(json.primeSettings.visor.HelmetOpacity));
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetHudLag(json.primeSettings.visor.HudLag == "true");
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetSoundFXVolume(Convert.ToUInt32(json.primeSettings.sound.SoundFXVolume));
+                } catch { }
+
+                try {
+                    appSettings.primeSettings.SetMusicVolume(Convert.ToUInt32(json.primeSettings.sound.MusicVolume));
+                } catch { }
+
+                return appSettings;
+            } catch {
+                return LoadDefaultSettings();
             }
         }
 
@@ -57,16 +128,8 @@ namespace MP1_Trilogy_Rando_Generator.Config
             String CurDir = Directory.GetCurrentDirectory();
             if (File.Exists(CurDir + @"\settings.json"))
                 File.Delete(CurDir + @"\settings.json");
-            using (var sW = new StreamWriter(File.OpenWrite(CurDir + @"\settings.json")))
-            {
-                sW.WriteLine("{");
-                sW.WriteLine("\t\"prime1RandomizerPath\": \"" + this.prime1RandomizerPath + "\",");
-                sW.WriteLine("\t\"prime1PlandomizerPath\": \"" + this.prime1PlandomizerPath + "\",");
-                sW.WriteLine("\t\"prime1PlandomizerLastJsonPath\": \"" + this.prime1PlandomizerLastJsonPath + "\",");
-                sW.WriteLine("\t\"outputPath\": \"" + this.outputPath + "\",");
-                sW.WriteLine("\t\"outputType\": \"" + this.outputType + "\"");
-                sW.WriteLine("}");
-            }
+
+            File.WriteAllText(CurDir + @"\settings.json", JsonConvert.SerializeObject(this, Formatting.Indented));
         }
     }
 }
