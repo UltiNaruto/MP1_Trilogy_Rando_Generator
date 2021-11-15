@@ -70,6 +70,7 @@
     <Compile Include="Config\PrimeSettings.cs" />
     <Compile Include="Config\RandomizerSettings.cs" />
     <Compile Include="Config\PatchSettings.cs" />
+    <Compile Include="Utils\Debug.cs" />
     <Compile Include="Enums\SpawnRoom.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

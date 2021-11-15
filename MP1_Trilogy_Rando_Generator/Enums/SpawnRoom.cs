@@ -35,8 +35,8 @@ namespace MP1_Trilogy_Rando_Generator.Enums
             { "Magmoor Caverns North (Lava Lake)", new SpawnRoom(0x3ef8237c, 6, 0) }, // Magmoor Caverns - Transport to Chozo Ruins North
             { "Magmoor Caverns West (Monitor Station)", new SpawnRoom(0x3ef8237c, 6, 13) }, // Magmoor Caverns - Transport to Phendrana Drifts North
             { "Magmoor Caverns East (Twin Fires)", new SpawnRoom(0x3ef8237c, 6, 16) }, // Magmoor Caverns - Transport to Tallon Overworld West
-            { "Magmoor Caverns East (Magmoor Workstation, Debris)", new SpawnRoom(0x3ef8237c, 6, 26) }, // Magmoor Caverns - Transport to Phazon Mines West
-            { "Magmoor Caverns East (Magmoor Workstation, Save Station)", new SpawnRoom(0x3ef8237c, 6, 27) } // Magmoor Caverns - Transport to Phendrana Drifts South
+            { "Magmoor Caverns South (Magmoor Workstation, Debris)", new SpawnRoom(0x3ef8237c, 6, 26) }, // Magmoor Caverns - Transport to Phazon Mines West
+            { "Magmoor Caverns South (Magmoor Workstation, Save Station)", new SpawnRoom(0x3ef8237c, 6, 27) } // Magmoor Caverns - Transport to Phendrana Drifts South
         };
 
         public static readonly Dictionary<String, SpawnRoom> plandomizerValues = new Dictionary<String, SpawnRoom>()

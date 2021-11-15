@@ -16,29 +16,49 @@ namespace MP1_Trilogy_Rando_Generator.Config
         public PatchSettings()
         {
             String AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            dynamic json = JObject.Parse(File.ReadAllText(AppData + @"\metroid-prime-randomizer\patch-settings.json"));
+            try
+            {
+                dynamic json = JObject.Parse(File.ReadAllText(AppData + @"\metroid-prime-randomizer\patch-settings.json"));
 
-            try {
-                this.baseIso = json.baseIso;
+                try
+                {
+                    this.baseIso = json.baseIso;
+                }
+                catch
+                {
+                    this.baseIso = "";
+                }
+
+                try
+                {
+                    this.outputFolder = json.outputFolder;
+                }
+                catch
+                {
+                    this.outputFolder = "";
+                }
+
+                try
+                {
+                    this.outputType = json.outputType;
+                }
+                catch
+                {
+                    this.outputType = "iso";
+                }
+
+                try
+                {
+                    this.trilogyIso = json.trilogyIso;
+                }
+                catch
+                {
+                    this.trilogyIso = "";
+                }
             } catch {
                 this.baseIso = "";
-            }
-
-            try {
-                this.outputFolder = json.outputFolder;
-            } catch {
                 this.outputFolder = "";
-            }
-
-            try {
-                this.outputType = json.outputType;
-            } catch {
                 this.outputType = "iso";
-            }
-
-            try {
-                this.trilogyIso = json.trilogyIso;
-            } catch {
                 this.trilogyIso = "";
             }
         }

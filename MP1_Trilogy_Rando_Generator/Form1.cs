@@ -35,153 +35,159 @@ namespace MP1_Trilogy_Rando_Generator
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Check for prerequisites
-
-            if (!ISOUtils.NOD.Installed())
+            try
             {
-                FormUtils.SetProgressStatus(1, 2);
-                FormUtils.SetStatus("Downloading and installing nod...");
-                if (!ISOUtils.NOD.Init())
+                // Check for prerequisites
+                if (!ISOUtils.NOD.Installed())
                 {
-                    MessageBox.Show("Couldn't download nod");
-                    this.Close();
+                    FormUtils.SetProgressStatus(1, 2);
+                    FormUtils.SetStatus("Downloading and installing nod...");
+                    if (!ISOUtils.NOD.Init())
+                    {
+                        MessageBox.Show("Couldn't download nod");
+                        this.Close();
+                    }
+                    FormUtils.SetProgressStatus(2, 2);
+                    FormUtils.SetStatus("Idle");
                 }
-                FormUtils.SetProgressStatus(2, 2);
-                FormUtils.SetStatus("Idle");
-            }
 
-            if (!ISOUtils.WIT.Installed())
-            {
-                FormUtils.SetProgressStatus(1, 2);
-                FormUtils.SetStatus("Downloading and installing WIT...");
-                if (!ISOUtils.WIT.Init())
+                if (!ISOUtils.WIT.Installed())
                 {
-                    MessageBox.Show("Couldn't download WIT");
-                    this.Close();
+                    FormUtils.SetProgressStatus(1, 2);
+                    FormUtils.SetStatus("Downloading and installing WIT...");
+                    if (!ISOUtils.WIT.Init())
+                    {
+                        MessageBox.Show("Couldn't download WIT");
+                        this.Close();
+                    }
+                    FormUtils.SetProgressStatus(2, 2);
+                    FormUtils.SetStatus("Idle");
                 }
-                FormUtils.SetProgressStatus(2, 2);
-                FormUtils.SetStatus("Idle");
+
+                // Pre-init form
+                if (!Directory.Exists(@".\tmp"))
+                    Directory.CreateDirectory(@".\tmp");
+
+                if (IsTemplateISOGenerated())
+                {
+                    this.template_iso_lbl.Text = "Metroid Prime Wii ISO template for Prime 1 patcher detected!";
+                    this.generate_template_iso_btn.Enabled = false;
+                    this.delete_cache_btn.Enabled = true;
+                }
+
+                appSettings = Config.AppSettings.LoadFromJson();
+                if (appSettings.prime1RandomizerPath.EndsWith(".exe") && File.Exists(appSettings.prime1RandomizerPath))
+                    this.randomizer_lbl.Text = "BashPrime's Randomizer found!";
+                this.output_path_txt_box.Text = appSettings.outputPath;
+                this.output_type_combo_box.SelectedIndex = this.output_type_combo_box.Items.IndexOf(appSettings.outputType);
+                this.disable_spring_ball_check_box.Checked = appSettings.disableSpringBall;
+                this.enable_map_from_start_chk_box.Checked = appSettings.enableMapFromStart;
+
+                // Load prime settings into the form
+
+                this.sensitivity_combo_box.SelectedIndex = (int)appSettings.primeSettings.controller.Sensitivity;
+                this.sensitivity_combo_box.Update();
+                this.controller_tab.Update();
+                this.controller_tab_table_layout.Update();
+
+                this.sensitivity_combo_box.SelectedIndexChanged += (s, ev) =>
+                {
+                    appSettings.primeSettings.SetSensitivity((Config.PrimeSettings.SensitivityEnum)sensitivity_combo_box.SelectedIndex);
+                    appSettings.SaveToJson();
+                };
+
+                this.lockon_freeaim_chk_box.Checked = appSettings.primeSettings.controller.LockOnFreeAim;
+                this.lockon_freeaim_chk_box.CheckedChanged += (s, ev) =>
+                {
+                    appSettings.primeSettings.SetLockOnFreeAim(lockon_freeaim_chk_box.Checked);
+                    appSettings.SaveToJson();
+                };
+
+                this.rumble_chk_box.Checked = appSettings.primeSettings.controller.Rumble;
+                this.rumble_chk_box.CheckedChanged += (s, ev) =>
+                {
+                    appSettings.primeSettings.SetRumble(rumble_chk_box.Checked);
+                    appSettings.SaveToJson();
+                };
+
+                this.swap_jump_fire_chk_box.Checked = appSettings.primeSettings.controller.SwapJumpFire;
+                this.swap_jump_fire_chk_box.CheckedChanged += (s, ev) =>
+                {
+                    appSettings.primeSettings.SetSwapJumpFire(swap_jump_fire_chk_box.Checked);
+                    appSettings.SaveToJson();
+                };
+
+                this.swap_visor_beam_chk_box.Checked = appSettings.primeSettings.controller.SwapVisorAndBeam;
+                this.swap_visor_beam_chk_box.CheckedChanged += (s, ev) =>
+                {
+                    appSettings.primeSettings.SetSwapVisorAndBeam(swap_visor_beam_chk_box.Checked);
+                    appSettings.SaveToJson();
+                };
+
+                this.brightness_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.display.Brightness);
+                this.brightness_scroll_bar.Value = (int)appSettings.primeSettings.display.Brightness;
+                this.brightness_scroll_bar.ValueChanged += (s, ev) =>
+                {
+                    this.brightness_txt_lbl.Text = Convert.ToString(this.brightness_scroll_bar.Value);
+                    appSettings.primeSettings.SetBrightness((UInt32)this.brightness_scroll_bar.Value);
+                    appSettings.SaveToJson();
+                };
+
+
+                this.bonus_credit_messages_chk_box.Checked = appSettings.primeSettings.display.BonusCreditMessages;
+                this.bonus_credit_messages_chk_box.CheckedChanged += (s, ev) =>
+                {
+                    appSettings.primeSettings.SetBonusCreditMessages(bonus_credit_messages_chk_box.Checked);
+                    appSettings.SaveToJson();
+                };
+
+                this.visor_opacity_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.visor.VisorOpacity);
+                this.visor_opacity_scroll_bar.Value = (int)appSettings.primeSettings.visor.VisorOpacity;
+                this.visor_opacity_scroll_bar.ValueChanged += (s, ev) =>
+                {
+                    this.visor_opacity_txt_lbl.Text = Convert.ToString(this.visor_opacity_scroll_bar.Value);
+                    appSettings.primeSettings.SetVisorOpacity((UInt32)this.visor_opacity_scroll_bar.Value);
+                    appSettings.SaveToJson();
+                };
+
+                this.helmet_opacity_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.visor.HelmetOpacity);
+                this.helmet_opacity_scroll_bar.Value = (int)appSettings.primeSettings.visor.HelmetOpacity;
+                this.helmet_opacity_scroll_bar.ValueChanged += (s, ev) =>
+                {
+                    this.helmet_opacity_txt_lbl.Text = Convert.ToString(this.helmet_opacity_scroll_bar.Value);
+                    appSettings.primeSettings.SetHelmetOpacity((UInt32)this.helmet_opacity_scroll_bar.Value);
+                    appSettings.SaveToJson();
+                };
+
+                this.hud_lag_chk_box.Checked = appSettings.primeSettings.visor.HudLag;
+                this.hud_lag_chk_box.CheckedChanged += (s, ev) =>
+                {
+                    appSettings.primeSettings.SetHudLag(hud_lag_chk_box.Checked);
+                    appSettings.SaveToJson();
+                };
+
+                this.sound_fx_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.sound.SoundFXVolume);
+                this.sound_fx_scroll_bar.Value = (int)appSettings.primeSettings.sound.SoundFXVolume;
+                this.sound_fx_scroll_bar.ValueChanged += (s, ev) =>
+                {
+                    this.sound_fx_txt_lbl.Text = Convert.ToString(this.sound_fx_scroll_bar.Value);
+                    appSettings.primeSettings.SetSoundFXVolume((UInt32)this.sound_fx_scroll_bar.Value);
+                    appSettings.SaveToJson();
+                };
+
+                this.music_vol_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.sound.MusicVolume);
+                this.music_vol_scroll_bar.Value = (int)appSettings.primeSettings.sound.MusicVolume;
+                this.music_vol_scroll_bar.ValueChanged += (s, ev) =>
+                {
+                    this.music_vol_txt_lbl.Text = Convert.ToString(this.music_vol_scroll_bar.Value);
+                    appSettings.primeSettings.SetMusicVolume((UInt32)this.music_vol_scroll_bar.Value);
+                    appSettings.SaveToJson();
+                };
             }
-
-            // Pre-init form
-
-            if (!Directory.Exists(@".\tmp"))
-                Directory.CreateDirectory(@".\tmp");
-
-            if (IsTemplateISOGenerated())
+            catch (Exception ex)
             {
-                this.template_iso_lbl.Text = "Metroid Prime Wii ISO template for Prime 1 patcher detected!";
-                this.generate_template_iso_btn.Enabled = false;
-                this.delete_cache_btn.Enabled = true;
+                Utils.Debug.LogException(ex);
             }
-            appSettings = Config.AppSettings.LoadFromJson();
-            if (appSettings.prime1RandomizerPath.EndsWith(".exe") && File.Exists(appSettings.prime1RandomizerPath))
-                this.randomizer_lbl.Text = "BashPrime's Randomizer found!";
-            this.output_path_txt_box.Text = appSettings.outputPath;
-            this.output_type_combo_box.SelectedIndex = this.output_type_combo_box.Items.IndexOf(appSettings.outputType);
-            this.disable_spring_ball_check_box.Checked = appSettings.disableSpringBall;
-            this.enable_map_from_start_chk_box.Checked = appSettings.enableMapFromStart;
-
-            // Load prime settings into the form
-
-            this.sensitivity_combo_box.SelectedIndex = (int)appSettings.primeSettings.controller.Sensitivity;
-            this.sensitivity_combo_box.Update();
-            this.controller_tab.Update();
-            this.controller_tab_table_layout.Update();
-
-            this.sensitivity_combo_box.SelectedIndexChanged += (s, ev) =>
-            {
-                appSettings.primeSettings.SetSensitivity((Config.PrimeSettings.SensitivityEnum)sensitivity_combo_box.SelectedIndex);
-                appSettings.SaveToJson();
-            };
-
-            this.lockon_freeaim_chk_box.Checked = appSettings.primeSettings.controller.LockOnFreeAim;
-            this.lockon_freeaim_chk_box.CheckedChanged += (s, ev) =>
-            {
-                appSettings.primeSettings.SetLockOnFreeAim(lockon_freeaim_chk_box.Checked);
-                appSettings.SaveToJson();
-            };
-
-            this.rumble_chk_box.Checked = appSettings.primeSettings.controller.Rumble;
-            this.rumble_chk_box.CheckedChanged += (s, ev) =>
-            {
-                appSettings.primeSettings.SetRumble(rumble_chk_box.Checked);
-                appSettings.SaveToJson();
-            };
-
-            this.swap_jump_fire_chk_box.Checked = appSettings.primeSettings.controller.SwapJumpFire;
-            this.swap_jump_fire_chk_box.CheckedChanged += (s, ev) =>
-            {
-                appSettings.primeSettings.SetSwapJumpFire(swap_jump_fire_chk_box.Checked);
-                appSettings.SaveToJson();
-            };
-
-            this.swap_visor_beam_chk_box.Checked = appSettings.primeSettings.controller.SwapVisorAndBeam;
-            this.swap_visor_beam_chk_box.CheckedChanged += (s, ev) =>
-            {
-                appSettings.primeSettings.SetSwapVisorAndBeam(swap_visor_beam_chk_box.Checked);
-                appSettings.SaveToJson();
-            };
-
-            this.brightness_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.display.Brightness);
-            this.brightness_scroll_bar.Value = (int)appSettings.primeSettings.display.Brightness;
-            this.brightness_scroll_bar.ValueChanged += (s, ev) =>
-            {
-                this.brightness_txt_lbl.Text = Convert.ToString(this.brightness_scroll_bar.Value);
-                appSettings.primeSettings.SetBrightness((UInt32)this.brightness_scroll_bar.Value);
-                appSettings.SaveToJson();
-            };
-
-
-            this.bonus_credit_messages_chk_box.Checked = appSettings.primeSettings.display.BonusCreditMessages;
-            this.bonus_credit_messages_chk_box.CheckedChanged += (s, ev) =>
-            {
-                appSettings.primeSettings.SetBonusCreditMessages(bonus_credit_messages_chk_box.Checked);
-                appSettings.SaveToJson();
-            };
-
-            this.visor_opacity_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.visor.VisorOpacity);
-            this.visor_opacity_scroll_bar.Value = (int)appSettings.primeSettings.visor.VisorOpacity;
-            this.visor_opacity_scroll_bar.ValueChanged += (s, ev) =>
-            {
-                this.visor_opacity_txt_lbl.Text = Convert.ToString(this.visor_opacity_scroll_bar.Value);
-                appSettings.primeSettings.SetVisorOpacity((UInt32)this.visor_opacity_scroll_bar.Value);
-                appSettings.SaveToJson();
-            };
-
-            this.helmet_opacity_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.visor.HelmetOpacity);
-            this.helmet_opacity_scroll_bar.Value = (int)appSettings.primeSettings.visor.HelmetOpacity;
-            this.helmet_opacity_scroll_bar.ValueChanged += (s, ev) =>
-            {
-                this.helmet_opacity_txt_lbl.Text = Convert.ToString(this.helmet_opacity_scroll_bar.Value);
-                appSettings.primeSettings.SetHelmetOpacity((UInt32)this.helmet_opacity_scroll_bar.Value);
-                appSettings.SaveToJson();
-            };
-
-            this.hud_lag_chk_box.Checked = appSettings.primeSettings.visor.HudLag;
-            this.hud_lag_chk_box.CheckedChanged += (s, ev) =>
-            {
-                appSettings.primeSettings.SetHudLag(hud_lag_chk_box.Checked);
-                appSettings.SaveToJson();
-            };
-
-            this.sound_fx_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.sound.SoundFXVolume);
-            this.sound_fx_scroll_bar.Value = (int)appSettings.primeSettings.sound.SoundFXVolume;
-            this.sound_fx_scroll_bar.ValueChanged += (s, ev) =>
-            {
-                this.sound_fx_txt_lbl.Text = Convert.ToString(this.sound_fx_scroll_bar.Value);
-                appSettings.primeSettings.SetSoundFXVolume((UInt32)this.sound_fx_scroll_bar.Value);
-                appSettings.SaveToJson();
-            };
-
-            this.music_vol_txt_lbl.Text = Convert.ToString(appSettings.primeSettings.sound.MusicVolume);
-            this.music_vol_scroll_bar.Value = (int)appSettings.primeSettings.sound.MusicVolume;
-            this.music_vol_scroll_bar.ValueChanged += (s, ev) =>
-            {
-                this.music_vol_txt_lbl.Text = Convert.ToString(this.music_vol_scroll_bar.Value);
-                appSettings.primeSettings.SetMusicVolume((UInt32)this.music_vol_scroll_bar.Value);
-                appSettings.SaveToJson();
-            };
         }
 
         private void generate_template_iso_btn_click(object sender, EventArgs e)
@@ -453,7 +459,7 @@ namespace MP1_Trilogy_Rando_Generator
             var outputPath = FormUtils.GetControlText(output_path_txt_box);
             var outputExt = ((String)FormUtils.GetComboBoxSelectedItem(output_type_combo_box));
 
-            String GameSettingsDolphinEmuPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar+ "Dolphin Emulator" + Path.DirectorySeparatorChar + "GameSettings" + Path.DirectorySeparatorChar;
+            String GameSettingsDolphinEmuPath = String.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Dolphin Emulator", "GameSettings") + Path.DirectorySeparatorChar;
             String curDir = Directory.GetCurrentDirectory();
 
             if (isLoading && ((Button)sender).Text == "Cancel")
@@ -529,118 +535,134 @@ namespace MP1_Trilogy_Rando_Generator
                     return;
                 }
                 int i = 0;
+                String spawnRoomName = String.Empty;
                 String[] gc_iso_files = Directory.EnumerateFiles(".\\tmp", "*.iso").ToArray();
                 foreach (var gc_iso_file in gc_iso_files)
                 {
-                    gc_iso_filename = Path.GetFileName(gc_iso_file);
-                    spoiler_filename = Path.ChangeExtension(gc_iso_filename, ".json").Replace(".json", " - Spoiler.json");
-
-                    FormUtils.SetProgressStatus(1, 5);
-                    FormUtils.SetStatus("Extracting randomized ISO...", i, gc_iso_files.Length);
-
-                    if (!ISOUtils.NOD.ExtractISO(".\\tmp\\" + gc_iso_filename, true))
+                    try
                     {
-                        FormUtils.ShowMessageBox("Failed extracting randomized iso!");
+                        gc_iso_filename = Path.GetFileName(gc_iso_file);
+                        spoiler_filename = Path.ChangeExtension(gc_iso_filename, ".json").Replace(".json", " - Spoiler.json");
+
+                        FormUtils.SetProgressStatus(1, 5);
+                        FormUtils.SetStatus("Extracting randomized ISO...", i, gc_iso_files.Length);
+
+                        if (!ISOUtils.NOD.ExtractISO(".\\tmp\\" + gc_iso_filename, true))
+                        {
+                            throw new Exception($"Failed extracting randomized iso! (File Name : {gc_iso_filename})");
+                        }
+
+                        File.Delete(".\\tmp\\" + gc_iso_filename);
+
+                        randomizerSettings = new Config.RandomizerSettings(".\\tmp\\gc\\files\\randomprime.txt");
+
+                        FormUtils.SetProgressStatus(2, 5);
+                        FormUtils.SetStatus("Replacing original PAKs with randomized PAKs...", i, gc_iso_files.Length);
+
+                        Pak_Path = ".\\tmp\\wii\\DATA\\files\\MP1";
+                        if (GameID.Substring(2, 2) == "IJ")
+                            Pak_Path += "JPN";
+
+                        File.Copy(".\\tmp\\dol_backup\\rs5fe_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
+                        File.Copy(".\\tmp\\dol_backup\\rs5fe_p.dol", ".\\tmp\\wii\\DATA\\files\\rs5fe_p.dol", true);
+                        if (GameID[3] == 'J')
+                            File.Copy(".\\tmp\\dol_backup\\rs5mp1jpn_p.dol", ".\\tmp\\wii\\DATA\\files\\rs5mp1jpn_p.dol", true);
+                        else
+                            File.Copy(".\\tmp\\dol_backup\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", true);
+
+                        foreach (var file in Directory.EnumerateFiles(".\\tmp\\gc\\files", "Metroid*.pak", SearchOption.TopDirectoryOnly))
+                            File.Copy(file, Pak_Path + "\\" + Path.GetFileName(file), true);
+
+                        File.Copy(".\\tmp\\gc\\files\\Tweaks.pak", Pak_Path + "\\Tweaks.pak", true);
+                        File.Copy(".\\tmp\\gc\\files\\NoARAM.pak", Pak_Path + "\\NoARAM.pak", true);
+                        File.Copy(".\\tmp\\gc\\files\\randomprime.txt", ".\\tmp\\wii\\DATA\\files\\randomprime.txt", true);
+
+                        Directory.Delete(".\\tmp\\gc", true);
+
+                        FormUtils.SetProgressStatus(3, 5);
+                        FormUtils.SetStatus("Applying patches to MP1 executable...", i, gc_iso_files.Length);
+
+                        PatchedGameID = GameID.Substring(0, 4) + DiscUtils.RandomizeDeveloperCode();
+
+                        /* Applying patches to dol file */
+
+                        Patcher.Patcher.Init(PatchedGameID.Substring(0, 4), 1);
+
+                        if (randomizerSettings.skipFrigate)
+                        {
+                            if (randomizerSettings.spawnRoom == null)
+                            {
+                                spawnRoomName = GetSpawnRoomFromRandomprime(".\\tmp\\wii\\DATA\\files\\randomprime.txt");
+                                throw new Exception($"No spawn room defined! Spawn room was defined on {spawnRoomName}");
+                            }
+                            config.Add("Starting Area", randomizerSettings.spawnRoom);
+                        }
+
+                        config.Add("Map Default State", enable_map_from_start_chk_box.Checked ? "Visible" : "Default");
+                        config.Add("Heat Protection", randomizerSettings.heatProtection);
+                        config.Add("Suit Damage Reduction", randomizerSettings.suitDamageReduction);
+                        config.Add("Disable Spring Ball", disable_spring_ball_check_box.Checked);
+                        config.Add("Etank Capacity", randomizerSettings.etankCapacity);
+                        config.Add("Max Obtainable Missiles", randomizerSettings.maxObtainableMissiles);
+                        config.Add("Max Obtainable Power Bombs", randomizerSettings.maxObtainablePowerBombs);
+                        config.Add("Save File Name", PatchedGameID.Substring(4, 2) + ".bin");
+                        config.Add("Settings", appSettings.primeSettings);
+                        Patcher.Patcher.Apply(config);
+
+                        /*  */
+
+                        FormUtils.SetProgressStatus(4, 5);
+                        FormUtils.SetStatus("Packing Metroid Prime Wii to " + outputExt.Substring(1).ToUpper() + " format...", i, gc_iso_files.Length);
+                        // WIT doesn't like complex paths so make the image in tmp folder then move back to the output folder
+                        if (outputExt == ".ciso")
+                        {
+                            ISOUtils.WIT.CreateCompressISO(".\\tmp\\mpt.ciso", false, PatchedGameID);
+                            if (File.Exists(GameSettingsDolphinEmuPath + GameID + ".ini") && !File.Exists(GameSettingsDolphinEmuPath + PatchedGameID + ".ini"))
+                                File.Copy(GameSettingsDolphinEmuPath + GameID + ".ini", GameSettingsDolphinEmuPath + PatchedGameID + ".ini");
+                        }
+                        else if (outputExt == ".wbfs")
+                            ISOUtils.WIT.CreateWBFS(".\\tmp\\mpt.wbfs", PatchedGameID);
+
+                        if (File.Exists(outputPath + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + outputExt))
+                            File.Delete(outputPath + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + outputExt);
+                        if (outputExt == ".wbfs")
+                            new_wii_iso_path = outputPath + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + "[" + PatchedGameID + "]\\" + PatchedGameID + ".wbfs";
+                        else
+                            new_wii_iso_path = outputPath + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + outputExt;
+
+                        if (!Directory.Exists(Path.GetDirectoryName(new_wii_iso_path)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(new_wii_iso_path));
+
+                        File.Move(".\\tmp\\mpt" + outputExt, new_wii_iso_path);
+
+                        if (File.Exists(".\\tmp\\" + spoiler_filename))
+                        {
+                            if (File.Exists(Path.GetDirectoryName(new_wii_iso_path) + "\\" + spoiler_filename))
+                                File.Delete(Path.GetDirectoryName(new_wii_iso_path) + "\\" + spoiler_filename);
+                            File.Move(".\\tmp\\" + spoiler_filename, Path.GetDirectoryName(new_wii_iso_path) + "\\" + spoiler_filename);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Utils.Debug.LogException(ex);
+                        if (randomizerSettings != default(Config.RandomizerSettings))
+                        {
+                            Utils.Debug.Log($"Config of {gc_iso_filename} :");
+                            Utils.Debug.Log($"\tSkip Frigate : {randomizerSettings.skipFrigate}");
+                            Utils.Debug.Log($"\tMax obtainable missiles : {randomizerSettings.maxObtainableMissiles}");
+                            Utils.Debug.Log($"\tMax obtainable power bombs : {randomizerSettings.maxObtainablePowerBombs}");
+                            Utils.Debug.Log($"\tEnergy tank capacity : {randomizerSettings.etankCapacity}");
+                            Utils.Debug.Log($"\tHeat Protection : {randomizerSettings.heatProtection}");
+                            Utils.Debug.Log($"\tSuit Damage Protection : {randomizerSettings.suitDamageReduction}");
+                            Utils.Debug.Log($"\tMap Default State : {randomizerSettings.mapDefaultState}");
+                        }
+                        FormUtils.ShowMessageBox($"Seed {i} failed to be converted!\r\nCheck logs folder for more info!\r\n\r\nFile Name : {gc_iso_filename}");
                         FormUtils.SetProgressStatus(5, 5);
                         FormUtils.SetStatus("Idle");
                         FormUtils.SetControlText(this.randomize_btn, "Randomize");
                         isLoading = false;
-                        return;
                     }
-
-                    File.Delete(".\\tmp\\" + gc_iso_filename);
-
-                    randomizerSettings = new Config.RandomizerSettings(".\\tmp\\gc\\files\\randomprime.txt");
-
-                    FormUtils.SetProgressStatus(2, 5);
-                    FormUtils.SetStatus("Replacing original PAKs with randomized PAKs...", i, gc_iso_files.Length);
-
-                    Pak_Path = ".\\tmp\\wii\\DATA\\files\\MP1";
-                    if (GameID.Substring(2, 2) == "IJ")
-                        Pak_Path += "JPN";
-
-                    File.Copy(".\\tmp\\dol_backup\\rs5fe_p.dol", ".\\tmp\\wii\\DATA\\sys\\main.dol", true);
-                    File.Copy(".\\tmp\\dol_backup\\rs5fe_p.dol", ".\\tmp\\wii\\DATA\\files\\rs5fe_p.dol", true);
-                    if (GameID[3] == 'J')
-                        File.Copy(".\\tmp\\dol_backup\\rs5mp1jpn_p.dol", ".\\tmp\\wii\\DATA\\files\\rs5mp1jpn_p.dol", true);
-                    else
-                        File.Copy(".\\tmp\\dol_backup\\rs5mp1_p.dol", ".\\tmp\\wii\\DATA\\files\\rs5mp1_p.dol", true);
-
-                    foreach (var file in Directory.EnumerateFiles(".\\tmp\\gc\\files", "Metroid*.pak", SearchOption.TopDirectoryOnly))
-                        File.Copy(file, Pak_Path + "\\" + Path.GetFileName(file), true);
-
-                    File.Copy(".\\tmp\\gc\\files\\Tweaks.pak", Pak_Path + "\\Tweaks.pak", true);
-                    File.Copy(".\\tmp\\gc\\files\\NoARAM.pak", Pak_Path + "\\NoARAM.pak", true);
-                    File.Copy(".\\tmp\\gc\\files\\randomprime.txt", ".\\tmp\\wii\\DATA\\files\\randomprime.txt", true);
-
-                    Directory.Delete(".\\tmp\\gc", true);
-
-                    FormUtils.SetProgressStatus(3, 5);
-                    FormUtils.SetStatus("Applying patches to MP1 executable...", i, gc_iso_files.Length);
-
-                    PatchedGameID = GameID.Substring(0, 4) + DiscUtils.RandomizeDeveloperCode();
-
-                    /* Applying patches to dol file */
-
-                    Patcher.Patcher.Init(PatchedGameID.Substring(0, 4), 1);
-
-                    if (randomizerSettings.skipFrigate)
-                    {
-                        if (randomizerSettings.spawnRoom == null)
-                        {
-                            FormUtils.ShowMessageBox("No spawn room defined!");
-                            FormUtils.SetProgressStatus(5, 5);
-                            FormUtils.SetStatus("Idle");
-                            FormUtils.SetControlText(this.randomize_btn, "Randomize");
-                            isLoading = false;
-                            return;
-                        }
-                        config.Add("Starting Area", randomizerSettings.spawnRoom);
-                    }
-
-                    config.Add("Map Default State", enable_map_from_start_chk_box.Checked ? "Visible" : "Default");
-                    config.Add("Heat Protection", randomizerSettings.heatProtection);
-                    config.Add("Suit Damage Reduction", randomizerSettings.suitDamageReduction);
-                    config.Add("Disable Spring Ball", disable_spring_ball_check_box.Checked);
-                    config.Add("Etank Capacity", randomizerSettings.etankCapacity);
-                    config.Add("Max Obtainable Missiles", randomizerSettings.maxObtainableMissiles);
-                    config.Add("Max Obtainable Power Bombs", randomizerSettings.maxObtainablePowerBombs);
-                    config.Add("Save File Name", PatchedGameID.Substring(4, 2) + ".bin");
-                    config.Add("Settings", appSettings.primeSettings);
-                    Patcher.Patcher.Apply(config);
-
-                    /*  */
-
-                    FormUtils.SetProgressStatus(4, 5);
-                    FormUtils.SetStatus("Packing Metroid Prime Wii to " + outputExt.Substring(1).ToUpper() + " format...", i, gc_iso_files.Length);
-                    // WIT doesn't like complex paths so make the image in tmp folder then move back to the output folder
-                    if (outputExt == ".ciso")
-                    {
-                        ISOUtils.WIT.CreateCompressISO(".\\tmp\\mpt.ciso", false, PatchedGameID);
-                        if (File.Exists(GameSettingsDolphinEmuPath + GameID + ".ini") && !File.Exists(GameSettingsDolphinEmuPath + PatchedGameID + ".ini"))
-                            File.Copy(GameSettingsDolphinEmuPath + GameID + ".ini", GameSettingsDolphinEmuPath + PatchedGameID + ".ini");
-                    }
-                    else if (outputExt == ".wbfs")
-                        ISOUtils.WIT.CreateWBFS(".\\tmp\\mpt.wbfs", PatchedGameID);
-
-                    if (File.Exists(outputPath + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + outputExt))
-                        File.Delete(outputPath + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + outputExt);
-                    if (outputExt == ".wbfs")
-                        new_wii_iso_path = outputPath + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + "[" + PatchedGameID + "]\\" + PatchedGameID + ".wbfs";
-                    else
-                        new_wii_iso_path = outputPath + "\\" + Path.GetFileNameWithoutExtension(gc_iso_filename) + outputExt;
-
-                    if (!Directory.Exists(Path.GetDirectoryName(new_wii_iso_path)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(new_wii_iso_path));
-
-                    File.Move(".\\tmp\\mpt" + outputExt, new_wii_iso_path);
-
-                    if (File.Exists(".\\tmp\\" + spoiler_filename))
-                    {
-                        if (File.Exists(Path.GetDirectoryName(new_wii_iso_path) + "\\" + spoiler_filename))
-                            File.Delete(Path.GetDirectoryName(new_wii_iso_path) + "\\" + spoiler_filename);
-                        File.Move(".\\tmp\\" + spoiler_filename, Path.GetDirectoryName(new_wii_iso_path) + "\\" + spoiler_filename);
-                    }
+                    config.Clear();
                     i++;
                 }
                 FormUtils.SetProgressStatus(5, 5);
@@ -649,6 +671,35 @@ namespace MP1_Trilogy_Rando_Generator
                 FormUtils.SetControlText(this.randomize_btn, "Randomize");
                 isLoading = false;
             }));
+        }
+
+        string GetSpawnRoomFromRandomprime(string path)
+        {
+            var line = default(String);
+            var kvp = default(String[]);
+
+            try
+            {
+                using (var sR = new StreamReader(File.OpenRead(path)))
+                {
+                    while (!sR.EndOfStream)
+                    {
+                        line = sR.ReadLine();
+                        if (!line.Contains(":"))
+                            continue;
+                        if (line.EndsWith(":"))
+                            continue;
+
+                        kvp = line.Split(':');
+                        if (kvp.Length == 2)
+                        {
+                            if (kvp[0].Trim() == "starting area")
+                                return kvp[1].Trim();
+                        }
+                    }
+                }
+            } catch { }
+            return "#NULL";
         }
 
         private void output_path_btn_click(object sender, EventArgs e)

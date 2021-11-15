@@ -349,7 +349,7 @@
             this.title_lbl.Name = "title_lbl";
             this.title_lbl.Size = new System.Drawing.Size(730, 32);
             this.title_lbl.TabIndex = 2;
-            this.title_lbl.Text = "MP1 Trilogy Rando Generator v2.1";
+            this.title_lbl.Text = "MP1 Trilogy Rando Generator v2.2";
             this.title_lbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.title_lbl.MouseDown += new System.Windows.Forms.MouseEventHandler(this.form1_MouseDown);
             // 
@@ -1271,7 +1271,7 @@
             this.MinimumSize = new System.Drawing.Size(800, 360);
             this.Name = "main_form";
             this.ShowIcon = false;
-            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v1.8";
+            this.Text = "Metroid Prime 1 - Trilogy Rando Generator v2.2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_closing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.form1_MouseDown);
